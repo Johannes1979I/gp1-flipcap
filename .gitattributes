@@ -1,0 +1,3 @@
+# Nessuna conversione di fine riga: i file devono restare byte-identici
+# a quelli su cui e' calcolato docs/SHA256SUMS.txt.
+* -text

@@ -1,0 +1,26 @@
+GP1 FlipCap V4.2
+================
+
+Vieni dalla V4.1? Leggi in quest'ordine:
+
+  1) CHANGELOG_V4.2.md   cosa era rotto nella V4.1 e cosa e' cambiato, con i
+                         numeri misurati sulle mesh. Tre difetti bloccanti.
+  2) MONTAGGIO.md        cosa ristampare, i 4 fori da fare sull'housing che
+                         hai gia' stampato, ordine di montaggio.
+  3) README.md           descrizione generale del progetto.
+
+Confronto visivo:  docs/render/  (coppie *_PRIMA / *_DOPO)
+Verifica geometrica:  docs/VERIFICA_COLLISIONI.txt
+
+DA STAMPARE SUBITO: stl/motor_bracket.stl
+Senza quel pezzo il 28BYJ-48 non ha nessun punto di fissaggio: nella V4.1 la
+piastra di supporto motore era un solido staccato, sospeso a 12,45 mm da
+qualunque parete della scatola.
+
+DA RISTAMPARE: stl/mono_arm.stl, stl/lid_backplate.stl, stl/hall_plate.stl
+
+RESTANO BUONI: housing, cover, output_gear, compound_gear, motor_pinion,
+magnet_flag (sull'housing servono solo 4 fori Ø3,4 - vedi MONTAGGIO.md).
+
+PRIMA DELLA STAMPA DEFINITIVA: misura il diametro reale dell'OTA.
+Il modello usa ota_d=362 mm.

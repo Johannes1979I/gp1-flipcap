@@ -1,0 +1,22 @@
+Quantita,Componente,Specifica/nota
+1,Disco tappo,374 mm; PVC espanso/Forex 1.5 mm. NON usare 2 mm o PETG pieno: la coppia disponibile e' al limite
+1,Albero acciaio,6 mm x 100 mm (V4.1 diceva 95: con il braccio riposizionato non basta)
+2,Cuscinetto 626ZZ,6x19x6 mm per albero uscita
+1,Cuscinetto 625ZZ,5x16x5 mm nel lato 42T dell'ingranaggio composto
+1,Perno M5,M5x80 + rondelle + dado autobloccante per ingranaggio composto
+1,Rondella PTFE/nylon,M5 fra composto e parete sinistra
+4,Inserti filettati M3,Coperchio scatola
+4,Viti M3x10,Coperchio scatola
+2,Inserti filettati M3,Staffa motore (nella flangia superiore)
+2,Viti M3x10,Staffa motore -> tetto scatola (dall'esterno)
+2,Viti M3x12 + rondelle,28BYJ-48 -> staffa motore (asole di registrazione interasse)
+2,Viti M3x16 + rondelle + dadi,Piastra sensori Hall -> parete sinistra
+1,Vite M3x25 + dado,Morsetto mozzo monobraccio
+1,Grano/vite M3,Bandierina magnete sull'albero
+1,Vite M3,Bloccaggio mozzo ingranaggio uscita sull'albero
+4,Viti M4x16 + rondelle larghe,Tappo -> monobraccio (4 punti, era 2 in V4.1)
+4,Dadi M4,Alloggiati nelle sedi esagonali sotto le piazzole del braccio
+2,Cinghie,25 mm x almeno 1200 mm; Velcro/cinghia tessile attorno OTA
+1,Nastro gomma/EVA,3-4 mm fra sella e tubo (se OTA reale < 362 mm il gioco va riempito)
+-,PETG/ASA,Scatola/braccio/staffa/sella
+-,PETG/ASA o PA,Ingranaggi; layer 0.12-0.16 mm

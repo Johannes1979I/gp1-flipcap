@@ -1,0 +1,14 @@
+Quantita,Componente,Specifica/nota
+1,Arduino Nano compatibile,ATmega328P 5V 16MHz; USB-C/CH340 va bene
+1,28BYJ-48,Versione 5V
+1,Scheda ULN2003,Driver per 28BYJ-48
+1,Convertitore buck LM2596,12V -> 5V regolato; almeno 2A consigliati
+2,Sensore Hall A3144/AH3144,Digitale 5V. Verificare la POLARITA' del magnete: l'A3144 scatta su una sola faccia
+1,Magnete neodimio,6x3 mm N35 o superiore per la bandierina
+1,Condensatore elettrolitico,1000 uF 10V o 16V sulla linea 5V motore
+2,Condensatore ceramico,100 nF vicino ai sensori Hall
+1,Fusibile + portafusibile,1A o 1.5A lato 12V
+1,Connettore alimentazione,DC 5.5x2.1 oppure GX12-2
+1,Cavo USB,Dipende dal Nano scelto
+1,Morsettiera/WAGO,Distribuzione 5V e GND
+-,Cavo,0.25-0.5 mm2 + termorestringente
