@@ -1,26 +1,33 @@
 GP1 FlipCap V4.2
 ================
 
-Vieni dalla V4.1? Leggi in quest'ordine:
+Tappo antipolvere motorizzato per telescopi newtoniani, comandato da INDI/Ekos.
 
-  1) CHANGELOG_V4.2.md   cosa era rotto nella V4.1 e cosa e' cambiato, con i
-                         numeri misurati sulle mesh. Tre difetti bloccanti.
-  2) MONTAGGIO.md        cosa ristampare, i 4 fori da fare sull'housing che
-                         hai gia' stampato, ordine di montaggio.
-  3) README.md           descrizione generale del progetto.
+APRI PRIMA DI TUTTO:
 
-Confronto visivo:  docs/render/  (coppie *_PRIMA / *_DOPO)
-Verifica geometrica:  docs/VERIFICA_COLLISIONI.txt
+  MANUALE_MONTAGGIO_V4.2.pdf
 
-DA STAMPARE SUBITO: stl/motor_bracket.stl
-Senza quel pezzo il 28BYJ-48 non ha nessun punto di fissaggio: nella V4.1 la
-piastra di supporto motore era un solido staccato, sospeso a 12,45 mm da
-qualunque parete della scatola.
+18 pagine: elenco dei pezzi da stampare, viteria, elettronica, scelta del
+materiale del tappo, montaggio meccanico ed elettrico passo-passo, taratura,
+configurazione di Ekos, diagnostica.
 
-DA RISTAMPARE: stl/mono_arm.stl, stl/lid_backplate.stl, stl/hall_plate.stl
+ALTRI FILE
 
-RESTANO BUONI: housing, cover, output_gear, compound_gear, motor_pinion,
-magnet_flag (sull'housing servono solo 4 fori Ø3,4 - vedi MONTAGGIO.md).
+  README.md              panoramica del progetto
+  CHANGELOG_V4.2.md      cosa e' cambiato dalla V4.1 e perche'
+  gp1_flipcap_V4_2.scad  modello parametrico (OpenSCAD)
+  stl/                   i dieci pezzi da stampare
+  firmware/              sketch Arduino + .hex precompilato
+  docs/                  BOM, schema collegamenti, verifica geometrica
 
-PRIMA DELLA STAMPA DEFINITIVA: misura il diametro reale dell'OTA.
-Il modello usa ota_d=362 mm.
+DUE COSE DA DECIDERE PRIMA DI STAMPARE
+
+  1) Il materiale del tappo. Determina la quota delle piazzole del braccio,
+     quindi va scelto PRIMA di stampare mono_arm.stl. Gli STL forniti sono
+     per un disco da 3 mm. Vedi capitolo 0.6 del manuale.
+
+  2) Il diametro del tuo tubo. Gli STL sono per 362 mm. Misura la
+     circonferenza reale e dividi per pi greco. Vedi capitolo 0.7.
+
+LICENZA: CERN-OHL-S v2 (open hardware). Vedi LICENSE e NOTICE.
+Fornito cosi' com'e', senza garanzia.

@@ -47,7 +47,9 @@ part="assembly";
 ota_d=362;              // MISURARE il tubo reale: circonferenza / pi
 ota_clearance=1.2;
 lid_d=374;
-lid_thickness=1.5;      // Forex/PVC espanso 1,5-2,0 mm
+lid_thickness=3;        // spessore del disco del tappo.
+                        // Determina la quota delle piazzole del braccio:
+                        // se lo cambi, RIGENERA mono_arm.stl prima di stampare.
 lid_angle=0;            // 0 = chiuso, open_angle = aperto
 show_ota=true;          // false = nascondi il tubo nei render
 show_lid=true;

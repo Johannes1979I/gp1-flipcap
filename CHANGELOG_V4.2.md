@@ -228,8 +228,21 @@ Margine 1,4x allo zenit, 8x all'orizzonte. Da -78 gradi in poi la gravita'
 aiuta l'apertura, quindi il tappo resta appoggiato aperto senza caricare il
 finecorsa.
 
-**Conseguenza operativa: imposta il park di Ekos con il tubo lontano dallo
-zenit.** E usa Forex da 1,5 mm, non 2 mm.
+Il tappo si aziona solo a telescopio fermo (si apre dopo aver sparcheggiato,
+si chiude dopo aver parcheggiato), quindi quello che conta e' **l'altezza a cui
+parcheggi**, non quella a cui fotografi. Margine di coppia per altezza del tubo
+sopra l'orizzonte:
+
+| disco Ø374 | massa | 0 gradi | 30 gradi | 45 gradi | zenit |
+|---|---|---|---|---|---|
+| Forex 1,5 mm | 109 g | 4,64x | 1,82x | 1,48x | 1,28x |
+| Forex 2 mm | 137 g | 3,98x | 1,49x | 1,21x | 1,04x |
+| Forex 3 mm | 192 g | 3,10x | 1,10x | **0,88x** | **0,76x** |
+| Alveolare PP 3 mm | 76 g | 5,78x | 2,46x | 2,03x | 1,76x |
+| Depron 6 mm | 50 g | 7,17x | 3,41x | 2,85x | 2,50x |
+
+Con il **Forex 3 mm il limite e' 36 gradi di altezza**: sopra, non apre.
+Il polipropilene alveolare da 3 mm resta sopra 1,7x in qualsiasi posizione.
 
 ---
 
