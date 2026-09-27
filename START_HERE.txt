@@ -1,33 +1,35 @@
-GP1 FlipCap V4.2
-================
+GP1 FlipCap V6
+==============
 
-Tappo antipolvere motorizzato per telescopi newtoniani, comandato da INDI/Ekos.
+Tappo antipolvere motorizzato per telescopi newtoniani, comandato da
+INDI/Ekos. Si apre ribaltandosi di 270 gradi e si posa sul tubo.
 
 APRI PRIMA DI TUTTO:
 
-  MANUALE_MONTAGGIO_V4.2.pdf
+  MANUALE_MONTAGGIO_V6.pdf
 
-18 pagine: elenco dei pezzi da stampare, viteria, elettronica, scelta del
-materiale del tappo, montaggio meccanico ed elettrico passo-passo, taratura,
-configurazione di Ekos, diagnostica.
+Contiene l'elenco dei pezzi da stampare, la viteria, l'elettronica, la scelta
+del materiale del tappo e il montaggio passo-passo: elettronica a banco,
+riduttore, montaggio sul telescopio, taratura, Ekos, diagnostica.
 
 ALTRI FILE
 
   README.md              panoramica del progetto
-  CHANGELOG_V4.2.md      cosa e' cambiato dalla V4.1 e perche'
-  gp1_flipcap_V4_2.scad  modello parametrico (OpenSCAD)
-  stl/                   i dieci pezzi da stampare
+  gp1_flipcap_V6.scad    modello parametrico (OpenSCAD): F5 mostra l'assieme
+  stl/                   i 14 pezzi da stampare, gia' orientati
   firmware/              sketch Arduino + .hex precompilato
-  docs/                  BOM, schema collegamenti, verifica geometrica
+  docs/                  distinte, schema dei collegamenti, verifica geometrica,
+                         assieme per SketchUp
 
 DUE COSE DA DECIDERE PRIMA DI STAMPARE
 
-  1) Il materiale del tappo. Determina la quota delle piazzole del braccio,
-     quindi va scelto PRIMA di stampare mono_arm.stl. Gli STL forniti sono
-     per un disco da 3 mm. Vedi capitolo 0.6 del manuale.
+  1) Il diametro del tuo tubo. Gli STL sono per 362 mm. Misura la
+     circonferenza e dividi per pi greco; se e' diverso rigenera housing e
+     cap_rest (capitolo 0.8 e appendice E del manuale).
 
-  2) Il diametro del tuo tubo. Gli STL sono per 362 mm. Misura la
-     circonferenza reale e dividi per pi greco. Vedi capitolo 0.7.
+  2) Il materiale del tappo. Con il motore 28BYJ-48 deve essere leggero:
+     polipropilene alveolare da 3 mm. Il Forex da 2 o 3 mm e' troppo pesante
+     e il tappo non si alza (capitolo 0.7).
 
 LICENZA: CERN-OHL-S v2 (open hardware). Vedi LICENSE e NOTICE.
 Fornito cosi' com'e', senza garanzia.

@@ -1,71 +1,78 @@
-GP1 FlipCap V4.2 - VERIFICA GEOMETRICA AUTOMATICA
-==================================================================
+GP1 FlipCap V6 - VERIFICA GEOMETRICA AUTOMATICA
+======================================================================
+cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
 
-1) INTEGRITA' DEI SOLIDI (ogni pezzo = 1 corpo connesso)
-   OK compound_gear    isole=1    25.0 x   35.1 x   35.2 mm      4.9 cm3
-   OK cover            isole=1    10.0 x  136.0 x   74.0 mm     33.7 cm3
-   OK hall_plate       isole=1    46.3 x   46.3 x    5.6 mm      3.5 cm3
-   OK housing          isole=1   116.0 x  206.7 x  134.0 mm    251.5 cm3
-   OK lid_backplate    isole=1    82.9 x   54.7 x    3.0 mm      8.5 cm3
-   OK magnet_flag      isole=1     5.0 x   22.0 x   30.0 mm      1.9 cm3
-   OK mono_arm         isole=1    82.9 x   96.3 x   53.5 mm     54.3 cm3
-   OK motor_bracket    isole=1    57.6 x   73.6 x   49.0 mm     33.8 cm3
-   OK motor_pinion     isole=1     7.0 x   12.6 x   12.8 mm      0.5 cm3
-   OK output_gear      isole=1    10.0 x   57.6 x   57.6 mm     15.8 cm3
-   -> TUTTI I PEZZI SONO SOLIDI UNICI
+1) PEZZI DA STAMPARE (stl/): ogni file deve essere un solido unico
+   OK bay_lid            corpi=1   104.0 x   56.0 x    6.0 mm    17.1 cm3  base Z=0.00
+   OK bay_tray           corpi=1    68.0 x   97.0 x   13.0 mm    21.4 cm3  base Z=0.00
+   OK cap_backplate      corpi=1    83.5 x   53.0 x    3.0 mm     9.2 cm3  base Z=0.00
+   OK cap_rest           corpi=1    60.0 x   40.0 x   38.8 mm    66.1 cm3  base Z=0.00
+   OK compound_gear      corpi=1    35.2 x   35.1 x   25.0 mm     4.9 cm3  base Z=0.00
+   OK cover              corpi=1    70.0 x  123.0 x   11.2 mm    28.8 cm3  base Z=0.00
+   OK hall_plate         corpi=1    55.3 x   55.3 x    8.2 mm     5.9 cm3  base Z=0.00
+   OK housing            corpi=1   205.0 x  196.6 x   72.0 mm   288.1 cm3  base Z=0.00
+   OK magnet_flag        corpi=1    30.0 x   22.0 x    5.0 mm     1.9 cm3  base Z=0.00
+   OK mono_arm           corpi=1    53.5 x  145.0 x   85.6 mm    69.2 cm3  base Z=0.00
+   OK motor_bracket      corpi=1    42.0 x   45.2 x   19.7 mm     8.2 cm3  base Z=-0.00
+   OK motor_pinion       corpi=1    12.8 x   12.6 x    7.0 mm     0.5 cm3  base Z=0.00
+   OK output_gear        corpi=1    57.6 x   57.6 x   10.0 mm    15.8 cm3  base Z=0.00
+   OK spacers            corpi=5    64.0 x    8.5 x   32.8 mm     2.1 cm3  base Z=0.00
+   -> tutti i pezzi sono solidi unici
+   -> materiale totale (appoggi x2): 605 cm3
 
-2) MONOBRACCIO vs HOUSING (corsa 0 -> -90 gradi)
-   punti campionati sul braccio: 26778
-   punti in compenetrazione su tutta la corsa: 0
-   luce minima braccio-housing: 2.00 mm (a 0 gradi)
-   -> NESSUNA COLLISIONE
+2) PEZZI FERMI MONTATI: compenetrazioni e luci
+   housing        <-> cover          appoggio di faccia
+   housing        <-> motor_bracket  appoggio di faccia
+   housing        <-> hall_plate     appoggio di faccia
+   housing        <-> spacers        appoggio di faccia
+   housing        <-> bay_lid        appoggio di faccia
+   housing        <-> bay_tray       appoggio di faccia
+   housing        <-> output_gear    luce 2.20 mm
+   housing        <-> compound_gear  luce 4.71 mm
+   housing        <-> magnet_flag    luce 6.00 mm
+   cover          <-> motor_bracket  luce 4.00 mm
+   cover          <-> spacers        appoggio di faccia
+   cover          <-> bay_lid        appoggio di faccia
+   cover          <-> compound_gear  luce 3.19 mm
+   motor_bracket  <-> compound_gear  luce 1.98 mm
+   motor_bracket  <-> motor_pinion   luce 2.78 mm
+   motor_bracket  <-> motor_dummy    appoggio di faccia
+   hall_plate     <-> spacers        luce 1.75 mm
+   hall_plate     <-> magnet_flag    luce 2.50 mm
+   spacers        <-> output_gear    appoggio di faccia
+   spacers        <-> compound_gear  luce 1.20 mm
+   spacers        <-> magnet_flag    appoggio di faccia
+   bay_lid        <-> bay_tray       appoggio di faccia
+   output_gear    <-> compound_gear  ingranano (luce minima 0.10 mm)
+   compound_gear  <-> motor_pinion   ingranano (luce minima 0.00 mm)
+   compound_gear  <-> motor_dummy    luce 0.37 mm
+   -> nessuna compenetrazione
 
-3) STAFFA MOTORE vs HOUSING / INGRANAGGI
-   appoggio di faccia (voluto): 0 punti
-   compenetrazione vera:        0 punti (prof. max 0.00 mm)
-   luce staffa <-> output_gear   :   3.00 mm
-   luce staffa <-> compound_gear :   1.00 mm
-   luce staffa <-> motor_pinion  :   8.07 mm
-   -> STAFFA LIBERA
+3) CORSA COMPLETA 0 -> -270 gradi
+      luce minima bandierina - piastra sensori        2.50 mm  (a -66 gradi)
+      luce minima braccio - appoggi                  43.90 mm  (a -264 gradi)
+      luce minima braccio - bay_lid                  82.26 mm  (a -270 gradi)
+      luce minima braccio - cover                    72.00 mm  (a 0 gradi)
+      luce minima braccio - housing                   8.00 mm  (a -111 gradi)
+      luce minima braccio - motor_bracket            56.31 mm  (a -261 gradi)
+      luce minima braccio - tubo                     36.50 mm  (a -270 gradi)
+      luce minima tappo - appoggi                    10.83 mm  (a -267 gradi)
+      luce minima tappo - bay_lid                    14.93 mm  (a -270 gradi)
+      luce minima tappo - cover                      51.26 mm  (a 0 gradi)
+      luce minima tappo - housing                     7.50 mm  (a -270 gradi)
+      luce minima tappo - motor_bracket              44.54 mm  (a 0 gradi)
+      luce minima tappo - tubo                       39.50 mm  (a -270 gradi)
+   (tappo - appoggi e' escluso a fine corsa: li' il tappo ci appoggia)
 
-4) DISCO TAPPO (D=374, sp.3.0) vs HOUSING
-       0 gradi : luce =   9.65 mm
-      -5 gradi : luce =  10.03 mm
-     -10 gradi : luce =  11.56 mm
-     -15 gradi : luce =  13.95 mm
-     -20 gradi : luce =  16.76 mm
-     -25 gradi : luce =  18.48 mm
-     -30 gradi : luce =  20.31 mm
-     -35 gradi : luce =  21.47 mm
-     -40 gradi : luce =  22.23 mm
-     -45 gradi : luce =  22.84 mm
-     -50 gradi : luce =  22.50 mm
-     -55 gradi : luce =  22.33 mm
-     -60 gradi : luce =  21.09 mm
-     -65 gradi : luce =  19.87 mm
-     -70 gradi : luce =  18.05 mm
-     -75 gradi : luce =  15.88 mm
-     -80 gradi : luce =  13.45 mm
-     -85 gradi : luce =  10.67 mm
-     -90 gradi : luce =   7.66 mm
-   -> luce minima su tutta la corsa: 7.66 mm (a -90 gradi)
+4) PARCHEGGIO (-270 gradi)
+   faccia inferiore del tappo: Y = 220.5 mm
+   sommita' degli appoggi:     Y = 218.5 mm  (+2 mm di EVA = appoggio)
+   coperchio vano elettronica: Y = 213.0 mm  -> luce 7.5 mm
 
-5) MONOBRACCIO vs TUBO OTA (D=362, bordo in Z=0)
-   -> il braccio resta sempre davanti al tubo; quota minima Z = 5.50 mm (a 0 gradi)
+5) EXTRACORSA (sensore OPEN guasto)
+   corsa nominale 22928 passi, MAX_MOVE_STEPS 24100 -> arresto a -283.8 gradi
+   oltre i -270 gradi il tappo e' gia' sugli appoggi: il motore si ferma
+   contro di loro (il 28BYJ in stallo non si danneggia) e il firmware
+   lo spegne al piu' tardi a MAX_MOVE_STEPS, segnalando lo stato 3.
 
-6) PIASTRA SENSORI vs HOUSING e vs BANDIERINA MAGNETE
-   appoggio di faccia (voluto): 150 punti
-   compenetrazione vera:        0 punti (prof. max 0.07 mm)
-   luce minima piastra <-> bandierina: 2.90 mm (a -27 gradi)
-   -> SISTEMA HALL LIBERO
-
-7) EXTRACORSA (sensore OPEN guasto): da dove il firmware deve fermare
-   corsa nominale = 7642 passi full-step
-     -90 gradi ( 7642 passi): disco   7.66 mm, braccio  2.00 mm
-     -95 gradi ( 8067 passi): disco   4.57 mm, braccio  2.00 mm
-    -100 gradi ( 8492 passi): disco   1.95 mm, braccio  1.24 mm  <- OLTRE QUI SI TOCCA
-    -105 gradi ( 8916 passi): disco   0.53 mm, braccio  0.92 mm  <- OLTRE QUI SI TOCCA
-    -110 gradi ( 9341 passi): disco   0.60 mm, braccio  0.35 mm  <- OLTRE QUI SI TOCCA
-   -> MAX_MOVE_STEPS nel firmware deve restare 8100 (-95,4 gradi)
-
-==================================================================
+======================================================================

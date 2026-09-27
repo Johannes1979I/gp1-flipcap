@@ -2,18 +2,21 @@
 # SPDX-License-Identifier: CERN-OHL-S-2.0
 # Copyright (C) 2026 Johannes1979I
 """
-GP1 FlipCap V4.2 - genera il manuale di montaggio in PDF.
+GP1 FlipCap V6 - genera il manuale di costruzione in PDF.
 
 Uso:  python docs/genera_manuale_pdf.py
-Esce: MANUALE_MONTAGGIO_V4.2.pdf nella radice del progetto.
+Esce: MANUALE_MONTAGGIO_V6.pdf nella radice del progetto.
 
-Le figure devono esistere in docs/manuale/ (le crea genera_figure_manuale.py).
+Prima servono le figure in docs/manuale/ (genera_figure_manuale.py) e il
+risultato della verifica in docs/VERIFICA_COLLISIONI.txt
+(verifica_collisioni.py): da li' il manuale prende luci e volumi.
 Richiede: reportlab, pillow.
 
 NOTA sui caratteri: i font standard del PDF usano WinAnsiEncoding. Niente
 frecce unicode, niente segni di spunta, niente >= : usare ->, "ok", ">=".
 """
 import os
+import re
 import sys
 
 from PIL import Image as PILImage
@@ -22,13 +25,14 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
+from reportlab.platypus.flowables import PageBreakIfNotEmpty
 from reportlab.platypus import (BaseDocTemplate, Frame, Image, KeepTogether,
                                 NextPageTemplate, PageBreak, PageTemplate,
                                 Paragraph, Spacer, Table, TableStyle)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG = os.path.join(ROOT, "docs", "manuale")
-OUT = os.path.join(ROOT, "MANUALE_MONTAGGIO_V4.2.pdf")
+OUT = os.path.join(ROOT, "MANUALE_MONTAGGIO_V6.pdf")
 
 INK = colors.HexColor("#1b2b3a")
 ACC = colors.HexColor("#1f6fb2")
@@ -49,7 +53,7 @@ S["h1"] = ParagraphStyle("h1", parent=ss["Normal"], fontName="Helvetica-Bold",
                          spaceAfter=0)
 S["h2"] = ParagraphStyle("h2", parent=ss["Normal"], fontName="Helvetica-Bold",
                          fontSize=13.5, leading=17, textColor=INK,
-                         spaceBefore=10, spaceAfter=5)
+                         spaceBefore=10, spaceAfter=5, keepWithNext=1)
 S["step"] = ParagraphStyle("step", parent=ss["Normal"],
                            fontName="Helvetica-Bold", fontSize=11.5,
                            leading=14.5, textColor=INK)
@@ -245,6 +249,52 @@ def table(rows, widths, header=True, align=None, fs=8.6):
     sp(8)
 
 
+S["code"] = ParagraphStyle("code", parent=ss["Normal"], fontName="Courier",
+                           fontSize=8.2, leading=10.6, textColor=INK,
+                           backColor=colors.HexColor("#f2f5f8"),
+                           borderPadding=(4, 5, 4, 5), spaceBefore=3, spaceAfter=6)
+
+
+def code(text):
+    story.append(Paragraph(text.replace("&", "&amp;").replace("<", "&lt;"), S["code"]))
+
+
+NOMI_LUCI = {
+    "braccio - housing": "Braccio - scatola, su tutta la corsa",
+    "braccio - tubo": "Braccio - tubo",
+    "braccio - appoggi": "Braccio e contropiastra - appoggi del tappo",
+    "tappo - housing": "Disco del tappo - scatola",
+    "tappo - bay_lid": "Disco del tappo - coperchio del vano",
+    "tappo - cover": "Disco del tappo - coperchio del riduttore",
+    "tappo - tubo": "Disco del tappo - tubo (esclusi gli appoggi)",
+    "tappo - appoggi": "Disco del tappo - appoggi, prima dell'arrivo",
+    "bandierina - piastra sensori": "Bandierina - piastra dei sensori (traferro)",
+}
+
+
+def leggi_dati():
+    """Numeri del manuale presi dalla verifica e dal file .scad."""
+    ver = open(os.path.join(ROOT, "docs", "VERIFICA_COLLISIONI.txt"), encoding="utf-8").read()
+    scad = open(os.path.join(ROOT, "gp1_flipcap_V6.scad"), encoding="utf-8").read()
+    d = {}
+    vol = float(re.search(r"materiale totale.*?: (\d+) cm3", ver).group(1))
+    d["vol_tot"] = "%d" % round(vol, -1)
+    d["peso_tot"] = "%d" % round(vol * 1.27 * 0.6, -1)
+    m = re.search(r"housing\s+corpi=1\s+([\d.]+) x\s+([\d.]+) x\s+([\d.]+) mm", ver)
+    d["housing_x"], d["housing_y"], d["housing_z"] = ("%.0f" % float(v) for v in m.groups())
+    rz = re.search(r"rest_z=\[([-\d.]+),([-\d.]+)\]", scad)
+    d["rest1"], d["rest2"] = abs(int(float(rz.group(1)))), abs(int(float(rz.group(2))))
+    rows = [["Grandezza", "Luce minima"]]
+    for k, v in re.findall(r"luce minima (.+?)\s{2,}([\d.]+) mm", ver):
+        k = k.strip()
+        if k in NOMI_LUCI:
+            rows.append([NOMI_LUCI[k], "%s mm" % v.replace(".", ",")])
+    park = re.search(r"coperchio vano elettronica: Y = [\d.]+ mm  -> luce ([\d.]+) mm", ver)
+    rows.append(["Tappo parcheggiato - coperchio del vano", "%s mm" % park.group(1).replace(".", ",")])
+    d["tabella_luci"] = rows
+    return d
+
+
 # ------------------------------------------------------------------ pagina
 def page_deco(canv, doc):
     canv.saveState()
@@ -255,14 +305,14 @@ def page_deco(canv, doc):
         canv.setFont("Helvetica", 7.6)
         canv.setFillColor(GREY)
         canv.drawString(MARGIN, A4[1] - MARGIN + 9,
-                        "GP1 FlipCap V4.2 - Manuale di montaggio")
+                        "GP1 FlipCap V6 - Manuale di costruzione")
         canv.drawRightString(A4[0] - MARGIN, A4[1] - MARGIN + 9,
                              "pag. %d" % doc.page)
         canv.line(MARGIN, MARGIN - 8, A4[0] - MARGIN, MARGIN - 8)
         canv.setFont("Helvetica-Oblique", 7.2)
         canv.drawString(MARGIN, MARGIN - 15,
-                        "Quote in mm. Verificare sempre il diametro reale "
-                        "dell'OTA prima del fissaggio definitivo.")
+                        "Quote in mm. Misura il diametro reale del tuo tubo "
+                        "prima di stampare la scatola.")
     canv.restoreState()
 
 
@@ -276,11 +326,12 @@ class UI:
     figure = staticmethod(figure)
     figure_pair = staticmethod(figure_pair)
     h2 = staticmethod(h2)
+    code = staticmethod(code)
     p = staticmethod(p)
     sp = staticmethod(sp)
     mm = mm
     CW = CW
-    PageBreak = PageBreak
+    PageBreak = PageBreakIfNotEmpty
     story = story
     Paragraph = Paragraph
     Spacer = Spacer
@@ -293,12 +344,12 @@ def main():
         return 1
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import contenuto_manuale
-    contenuto_manuale.build(UI)
+    contenuto_manuale.build(UI, leggi_dati())
     doc = BaseDocTemplate(OUT, pagesize=A4,
                           leftMargin=MARGIN, rightMargin=MARGIN,
                           topMargin=MARGIN, bottomMargin=MARGIN,
-                          title="GP1 FlipCap V4.2 - Manuale di montaggio",
-                          author="GP1 FlipCap", subject="Manuale di montaggio")
+                          title="GP1 FlipCap V6 - Manuale di costruzione",
+                          author="GP1 FlipCap", subject="Manuale di costruzione")
     frame = Frame(MARGIN, MARGIN, CW, A4[1] - 2 * MARGIN, id="main",
                   leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates([PageTemplate(id="std", frames=[frame],

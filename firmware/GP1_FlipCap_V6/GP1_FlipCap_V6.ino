@@ -1,38 +1,37 @@
 // SPDX-License-Identifier: CERN-OHL-S-2.0
 // Copyright (C) 2026 Johannes1979I
 /*
-  GP1 FlipCap V4.2 - mono motore / mono braccio
-  Hardware: Arduino Nano/Uno + 1x 28BYJ-48 5V + 1x ULN2003 + 2x Hall A3144
-  Riduzione: riduttore interno 28BYJ + riduttore stampato 15:1
-  Protocollo: emula Alnitak Remote Dust Cover per indi_flipflat (product ID 98)
-  Seriale: 9600 8N1, comandi terminati da LF
+  GP1 FlipCap V6 - firmware
+  Tappo motorizzato a braccio singolo, ribaltamento di 270 gradi.
 
-  --------------------------------------------------------------------------
-  DIFFERENZE RISPETTO ALLA V4.1  (motivazioni in CHANGELOG_V4.2.md)
-  --------------------------------------------------------------------------
-  1. FULL-STEP 2 FASI ATTIVE al posto dell'half-step.
-     L'half-step alterna 1 e 2 fasi eccitate: la coppia media e' piu' bassa
-     di quella disponibile. Con 2 fasi sempre attive si guadagna circa il
-     40% di coppia, e a parita' di velocita' angolare la frequenza di passo
-     si dimezza (piu' facile per il 28BYJ). La corsa dura uguale.
-  2. RAMPA DI ACCELERAZIONE.
-     La V4.1 partiva di colpo a 833 passi/s da fermo, e lo faceva proprio
-     nell'istante di coppia resistente massima (tappo chiuso, tubo allo
-     zenit: ~0,22 N*m). Uno stepper in quelle condizioni perde passi.
-  3. CORSA RIDOTTA A 90 GRADI (era 105).
-     A 105 gradi il disco del tappo passava a 0,65 mm dalla scatola.
-  4. ANTIRIMBALZO sui finecorsa Hall.
-  5. Budget tempi ricalcolato: corsa nominale ~19 s contro i 27 s di
-     timeout, quindi con margine reale sotto i 30 s del driver INDI.
+  Hardware: Arduino Nano (ATmega328P) + 28BYJ-48 5 V + scheda ULN2003
+            + 2 sensori Hall A3144 (CLOSED e OPEN)
+  Riduzione: riduttore interno del 28BYJ + treno stampato 15:1
+  Protocollo: emula l'Alnitak Remote Dust Cover (product ID 98), quindi
+              funziona con il driver INDI "Flip Flat" (indi_flipflat) e con
+              qualunque software che parli il protocollo Alnitak.
+  Seriale: 9600 8N1, comandi terminati da LF.
 
-  --------------------------------------------------------------------------
-  IMPORTANTE
-  - Alimentare ULN2003 / motore da un 5 V esterno regolato (>= 1 A).
-  - Collegare il GND del 5 V esterno al GND dell'Arduino.
-  - Non alimentare il 28BYJ dalla USB / rail 5 V del Nano.
-  - I sensori Hall sono attesi ATTIVI BASSI con INPUT_PULLUP.
-  - Imposta la posizione di park di Ekos con il tubo NON allo zenit:
-    la coppia resistente passa da ~0,22 N*m a ~0,04 N*m.
+  COLLEGAMENTI
+    D2 D3 D4 D5  -> IN1 IN2 IN3 IN4 della scheda ULN2003
+    D10          <- uscita del sensore Hall CLOSED (tappo chiuso)
+    D11          <- uscita del sensore Hall OPEN   (tappo parcheggiato)
+    I sensori sono attivi bassi: il Nano usa le sue resistenze di pull-up.
+
+  COME SI MUOVE
+  - Full-step con due fasi sempre eccitate: e' il modo con piu' coppia.
+  - Rampa di accelerazione in partenza, poi ~417 passi al secondo.
+  - Ci si ferma sul sensore del lato verso cui si va. Il sensore vale solo
+    se letto attivo quattro volte di fila (antirimbalzo).
+  - Due protezioni se un sensore non scatta: un limite di passi (circa il
+    5% oltre la corsa nominale) e un limite di tempo. In quel caso lo
+    stato diventa 3 (errore) e il motore si spegne.
+  - A motore fermo le bobine sono spente: non scaldano e non consumano.
+
+  ALIMENTAZIONE
+  - Il motore prende i 5 V dal convertitore, non dal Nano: sotto sforzo il
+    28BYJ assorbe fino a ~250 mA e la porta USB del PC non va caricata.
+  - Il GND del convertitore e quello del Nano devono essere in comune.
 */
 
 #include <Arduino.h>
@@ -47,24 +46,28 @@ static const bool MOTOR_REVERSED = false;
 
 // --- Budget di movimento -------------------------------------------------
 // 28BYJ-48: 2038 full-step per giro d'uscita. Con la riduzione stampata 15:1
-// un giro del braccio sono 30570 full-step, quindi 90 gradi ~= 7642 step.
+// un giro del braccio sono 30570 full-step, quindi i 270 gradi della corsa
+// sono 22.928 passi: circa 55 secondi a regime.
 static const uint32_t STEP_INTERVAL_US  = 2400;  // regime: ~417 full-step/s
 static const uint32_t START_INTERVAL_US = 6000;  // partenza della rampa
 static const uint32_t RAMP_STEPS        = 400;   // lunghezza rampa (~0,7 s)
-static const uint32_t MOVE_TIMEOUT_MS   = 27000; // sotto i 30 s di INDI FlipFlat
 
-// LIMITE DI SICUREZZA MECCANICA, non una semplice tolleranza.
-// Se il sensore OPEN non scatta, questo e' l'unico freno prima che il tappo
-// vada a sbattere sulla scatola. Luce disco-scatola misurata sulle mesh:
-//     -90 gradi (7642 passi) -> 8,47 mm    <- corsa nominale
-//     -95 gradi (8067 passi) -> 5,38 mm
-//    -100 gradi (8491 passi) -> 1,72 mm
-//    -105 gradi (8916 passi) -> 0,77 mm    <- collisione
-// 8100 passi = -95,4 gradi, cioe' ~5,2 mm di luce anche in avaria.
-// NON alzarlo. La corsa reale resta 7642 passi qualunque sia la
-// registrazione della piastra sensori: le asole ruotano CLOSED e OPEN
-// insieme, e i due sensori sono a 90 gradi esatti per costruzione.
-static const uint32_t MAX_MOVE_STEPS    = 8100;
+// Con 270 gradi la corsa dura circa 55 s, cioe' PIU' dei 30 s dopo i quali il
+// driver indi_flipflat rimanda il comando:
+//     IEAddTimer(30000, parkTimeoutHelper, this);
+//     LOG_WARN("Parking cap timed out. Retrying..."); ParkCap();
+// Non e' un problema di per se': il comando ripetuto e' nella stessa direzione
+// del movimento in corso e startMotion() lo ignora (vedi la guardia piu'
+// sotto), quindi la corsa prosegue e finisce normalmente. Senza quella guardia
+// il comando ripetuto azzererebbe moveSteps e raddoppierebbe di fatto il
+// limite di extracorsa.
+static const uint32_t MOVE_TIMEOUT_MS   = 70000; // deve stare sopra i 55 s di corsa
+
+// Corsa nominale 270 gradi = 22.928 passi full-step (2038 x 15 x 0,75).
+// Oltre il fine corsa il tappo non ha piu' niente da colpire: va semplicemente
+// in appoggio sui supporti, quindi il limite serve solo a non far macinare il
+// motore all'infinito se il sensore OPEN non scatta.
+static const uint32_t MAX_MOVE_STEPS    = 24100;  // ~5% oltre i 22.928 nominali
 
 static const uint8_t PRODUCT_ID = 98;
 
@@ -143,11 +146,18 @@ void stopMotion(uint8_t state)
 
 void startMotion(int8_t direction)
 {
+  int8_t d = (direction > 0) ? 1 : -1;
+
+  // Comando ripetuto nella stessa direzione mentre siamo gia' in movimento:
+  // e' il retry del driver INDI dopo 30 s. Va ignorato, altrimenti azzera i
+  // contatori di corsa e con loro il limite di extracorsa.
+  if (moving && moveDirection == d) return;
+
   if (direction > 0 && openActive())   { stopMotion(2); return; }
   if (direction < 0 && closedActive()) { stopMotion(1); return; }
 
   moving = true;
-  moveDirection = (direction > 0) ? 1 : -1;
+  moveDirection = d;
   coverStatus = 0;
   moveStartMs = millis();
   moveSteps = 0;
@@ -201,7 +211,7 @@ void replyVersion()
 {
   Serial.print("*V");
   if (PRODUCT_ID < 10) Serial.print('0');
-  Serial.print(PRODUCT_ID); Serial.println("120");
+  Serial.print(PRODUCT_ID); Serial.println("160");
 }
 
 void replyBrightness()

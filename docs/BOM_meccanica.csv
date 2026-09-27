@@ -1,22 +1,20 @@
-Quantita,Componente,Specifica/nota
-1,Disco tappo,374 mm; PVC espanso/Forex 1.5 mm. NON usare 2 mm o PETG pieno: la coppia disponibile e' al limite
-1,Albero acciaio,6 mm x 100 mm (V4.1 diceva 95: con il braccio riposizionato non basta)
-2,Cuscinetto 626ZZ,6x19x6 mm per albero uscita
-1,Cuscinetto 625ZZ,5x16x5 mm nel lato 42T dell'ingranaggio composto
-1,Perno M5,M5x80 + rondelle + dado autobloccante per ingranaggio composto
-1,Rondella PTFE/nylon,M5 fra composto e parete sinistra
-4,Inserti filettati M3,Coperchio scatola
-4,Viti M3x10,Coperchio scatola
-2,Inserti filettati M3,Staffa motore (nella flangia superiore)
-2,Viti M3x10,Staffa motore -> tetto scatola (dall'esterno)
-2,Viti M3x12 + rondelle,28BYJ-48 -> staffa motore (asole di registrazione interasse)
-2,Viti M3x16 + rondelle + dadi,Piastra sensori Hall -> parete sinistra
-1,Vite M3x25 + dado,Morsetto mozzo monobraccio
-1,Grano/vite M3,Bandierina magnete sull'albero
-1,Vite M3,Bloccaggio mozzo ingranaggio uscita sull'albero
-4,Viti M4x16 + rondelle larghe,Tappo -> monobraccio (4 punti, era 2 in V4.1)
-4,Dadi M4,Alloggiati nelle sedi esagonali sotto le piazzole del braccio
-2,Cinghie,25 mm x almeno 1200 mm; Velcro/cinghia tessile attorno OTA
-1,Nastro gomma/EVA,3-4 mm fra sella e tubo (se OTA reale < 362 mm il gioco va riempito)
--,PETG/ASA,Scatola/braccio/staffa/sella
--,PETG/ASA o PA,Ingranaggi; layer 0.12-0.16 mm
+Quantita,Componente,Dove va / nota
+1,Albero acciaio Ø6 x 100 mm (tondo rettificato),Albero di uscita. Limare due piccoli piani a 41 e 73 mm dal lato braccio per i grani
+2,Cuscinetto 626ZZ (6x19x6),Parete sinistra della scatola e coperchio del riduttore; entrano dall'interno
+1,Cuscinetto 625ZZ (5x16x5),Dentro il lato 42T dell'ingranaggio composto
+1,Vite M5 x 80 + 2 rondelle M5 + dado autobloccante M5,Perno dell'ingranaggio composto; il dado non va stretto
+1,Rondella PTFE o nylon M5 spessore 1 mm,Fra distanziale c1 e ingranaggio composto
+10,Inserti filettati a caldo M3 (lunghezza 4-6 mm),4 coperchio riduttore; 4 coperchio vano; 2 piede della staffa motore
+4,Viti M3 x 8 testa svasata piana,Coperchio del vano elettronica
+8,Viti M3 x 8 testa cilindrica,4 coperchio del riduttore; 2 staffa motore (da sotto il fondo della scatola); 2 orecchie del 28BYJ-48 (si filettano da sole nella plastica)
+2,Viti M3 x 16 + rondelle + dadi,Piastra dei sensori; dall'esterno della parete sinistra
+1,Vite M3 x 25 + dado,Morsetto del mozzo del braccio
+2,Grani M3 x 5,Bandierina del magnete e ingranaggio di uscita
+4,Viti M4 x 16 + rondelle larghe + dadi M4,Tappo sul braccio; i dadi vanno nelle sedi sotto la piastra del braccio
+4,Viti autofilettanti 1.7 x 6 (o M1.6),Arduino Nano sulle colonnine alte
+8,Viti autofilettanti M3 x 6,ULN2003 e LM2596 sulle colonnine basse
+1,Magnete al neodimio 6 x 3 mm (N35 o superiore),Tasca della bandierina
+4,Cinghia a strappo (velcro) 25 mm x 1.4 m,2 per la scatola (sopra le selle); 2 per gli appoggi del tappo
+1,Gomma EVA (crepla) adesiva 2 mm; un foglio A4,Interno delle selle; sopra e sotto gli appoggi del tappo
+1,Lastra di polipropilene alveolare 3 mm almeno 380 x 380 mm,Disco del tappo Ø374 (il Forex e' troppo pesante per il 28BYJ-48)
+-,PETG o ASA; circa 500 g,Tutti i pezzi stampati (non PLA)

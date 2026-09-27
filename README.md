@@ -1,13 +1,16 @@
-# GP1 FlipCap V4.2
+# GP1 FlipCap V6
 
 Tappo antipolvere motorizzato per telescopi newtoniani, comandato da
-**INDI / Ekos**. Un motore, un braccio, tutta la meccanica chiusa in una
-scatola stampata che si fissa al tubo con due cinghie.
+**INDI / Ekos**. Un motore e un braccio: aprendosi il tappo ruota di **270°**,
+scavalca la scatola e si **posa sul tubo**, così il vento non lo fa vibrare.
+Riduttore ed elettronica stanno in un'unica scatola stampata, fissata al tubo
+con due cinghie a strappo.
 
-<img src="docs/manuale/F01_assieme.png" width="560">
+<img src="docs/manuale/F01_assieme_chiuso.png" width="620">
 
-📘 **[MANUALE_MONTAGGIO_V4.2.pdf](MANUALE_MONTAGGIO_V4.2.pdf)** — 18 pagine,
-dall'elenco dei pezzi da stampare fino alla configurazione di Ekos.
+📘 **[MANUALE_MONTAGGIO_V6.pdf](MANUALE_MONTAGGIO_V6.pdf)**: dal primo pezzo
+stampato fino alla configurazione di Ekos, passo per passo, per chi costruisce
+da zero.
 
 ---
 
@@ -15,100 +18,96 @@ dall'elenco dei pezzi da stampare fino alla configurazione di Ekos.
 
 | | |
 |---|---|
-| Motore | 1 × 28BYJ-48 5 V + ULN2003 |
-| Riduzione | riduttore interno del 28BYJ + riduzione stampata 15:1 (modulo 0,8) |
-| Corsa | 90°, circa 19 secondi |
-| Albero di uscita | acciaio 6 mm su due cuscinetti 626ZZ |
-| Finecorsa | 2 sensori Hall A3144 su piastra unica, magnete 6×3 su bandierina |
-| Fissaggio | sella curva parametrica + due cinghie |
+| Motore | 28BYJ-48 5 V + scheda ULN2003 |
+| Riduzione | riduttore interno del 28BYJ + treno stampato 15:1 (modulo 0,8) |
+| Corsa | 270°, circa 55 secondi; da aperto il tappo appoggia su due supporti sul tubo |
+| Albero di uscita | acciaio Ø6 × 100 mm su due 626ZZ, bloccato da distanziali stampati |
+| Finecorsa | 2 sensori Hall A3144 su piastra registrabile, magnete 6×3 su bandierina |
+| Elettronica | Arduino Nano + ULN2003 + LM2596 nel vano della scatola, su un vassoio |
+| Alimentazione | 12 V del setup; USB verso il PC |
+| Fissaggio | due selle e due cinghie a strappo da 25 mm |
 | Protocollo | Alnitak Remote Dust Cover, product ID 98 (`indi_flipflat`) |
-| Default | tubo Ø362 mm, tappo Ø374 mm — entrambi parametrici |
-| Materiale | ~410 cm³, circa 320 g di PETG in 10 pezzi |
+| Default | tubo Ø362 mm (Sky-Watcher Quattro 300), tappo Ø374 mm, tutto parametrico |
+| Stampa | 14 file, circa 600 cm³ di PETG o ASA |
 
-Non è un pannello per i flat: copre e scopre, non ha luce integrata.
+Non è un pannello per i flat: copre e scopre, non ha una luce.
 
 ## Per cominciare
 
-1. Stampa i dieci pezzi in `stl/` (elenco con volumi e orientamenti nel
-   capitolo 0 del manuale). PETG o ASA — **non PLA**.
-2. Procurati viteria, cuscinetti ed elettronica (capitoli 0.3 e 0.4).
-3. Scegli il materiale del tappo — vedi sotto, è la decisione che pesa di più.
-4. Segui il manuale: Parte A meccanica, Parte B elettronica, Parte C
-   integrazione.
-
-Se il tuo tubo non è da 362 mm, rigenera l'housing con il tuo valore:
+1. Misura il diametro del tuo tubo (circonferenza ÷ π). Se non è 362 mm,
+   rigenera `housing` e `cap_rest` (appendice E del manuale).
+2. Stampa i pezzi in `stl/`: sono già orientati per la stampa. PETG o ASA,
+   **non PLA**.
+3. Procurati viteria, cuscinetti ed elettronica (capitoli 0.4 e 0.5).
+4. Per il tappo usa **polipropilene alveolare da 3 mm** (vedi sotto).
+5. Segui il manuale nell'ordine: elettronica a banco, riduttore, telescopio.
 
 ```bash
-openscad -o stl/housing.stl -D 'part="housing"' -D ota_d=355 gp1_flipcap_V4_2.scad
+openscad -o stl/housing.stl -D 'part="housing"' -D ota_d=355 gp1_flipcap_V6.scad
+openscad -o stl/cap_rest.stl -D 'part="cap_rest"' -D ota_d=355 gp1_flipcap_V6.scad
 ```
 
-## La scelta che conta: il materiale del tappo
+## Il tappo deve essere leggero
 
-Il 28BYJ-48 con questa riduzione eroga circa **0,32 N·m**. La coppia necessaria
-per staccare il tappo dipende dalla massa del disco e da quanto è alto il tubo
-quando il tappo si muove. Il *margine* è il rapporto fra le due: **sotto 1,00
-non si apre**.
+Il braccio tiene il tappo a circa 27 cm dall'albero e il 28BYJ-48, con questa
+riduzione, eroga circa **0,32 N·m**. Il *margine* è il rapporto fra coppia
+disponibile e coppia richiesta nel punto peggiore della corsa: **sotto 1 il
+tappo non si alza**.
 
-| Disco Ø374 | Massa | Tubo a 0° | a 30° | a 45° | allo zenit |
-|---|---|---|---|---|---|
-| Forex / PVC espanso 1,5 mm | 109 g | 4,64× | 1,82× | 1,48× | 1,28× |
-| Forex 2 mm | 137 g | 3,98× | 1,49× | 1,21× | 1,04× |
-| Forex 3 mm | 192 g | 3,10× | 1,10× | **0,88×** | **0,76×** |
-| **Polipropilene alveolare 3 mm** | **76 g** | **5,78×** | **2,46×** | **2,03×** | **1,76×** |
-| Depron / XPS 6 mm | 50 g | 7,17× | 3,41× | 2,85× | 2,50× |
+| Disco Ø374 | Massa | Margine |
+|---|---|---|
+| **Polipropilene alveolare 3 mm** | **53 g** | **1,6** (consigliato) |
+| Depron / XPS 6 mm | 26 g | 2,4 (fragile) |
+| Forex 1,5 mm | 91 g | 1,1 (al limite) |
+| Forex 2 mm | 121 g | 0,85: non si alza |
+| Forex 3 mm | 181 g | 0,60: non si alza |
 
-Il tappo si muove solo a telescopio fermo (si apre dopo aver sparcheggiato, si
-chiude dopo aver parcheggiato), quindi quello che conta è **l'altezza a cui
-parcheggi**, non quella a cui fotografi. Con il Forex 3 mm il limite è 36° di
-altezza. Il polipropilene alveolare da 3 mm resta sopra 1,7× in qualsiasi
-posizione ed è la scelta consigliata.
-
-> Gli STL sono generati per un tappo da **3 mm**. Per altri spessori rigenera
-> `mono_arm.stl` (appendice E del manuale).
+Per un tappo più pesante serve un motore più forte (NEMA 14 o 17).
 
 ## File
 
 ```
-MANUALE_MONTAGGIO_V4.2.pdf     manuale illustrato, 18 pagine
-gp1_flipcap_V4_2.scad          modello parametrico, tutti i pezzi
-CHANGELOG_V4.2.md              cosa e' cambiato dalla V4.1, con i numeri
-MONTAGGIO.md                   indice del manuale
+MANUALE_MONTAGGIO_V6.pdf       manuale di costruzione illustrato
+gp1_flipcap_V6.scad            modello parametrico: tutti i pezzi e l'assieme
 LICENSE / NOTICE               CERN-OHL-S v2
+stl/                           i 14 pezzi da stampare, già orientati
 firmware/
-  GP1_Alnitak_DustCover_V4_2/  sketch Arduino
-  build/                       .hex precompilato per Nano
+  GP1_FlipCap_V6/              sketch Arduino
+  build/                       .hex precompilato per Nano + istruzioni avrdude
 docs/
   BOM_meccanica.csv  BOM_elettronica.csv  COLLEGAMENTI.md
-  verifica_collisioni.py       verifica geometrica automatica sugli STL
-  VERIFICA_COLLISIONI.txt      output della verifica
+  verifica_collisioni.py       verifica geometrica automatica
+  VERIFICA_COLLISIONI.txt      risultato della verifica
+  genera_figure_manuale.py     render e schemi del manuale
   contenuto_manuale.py         testo del manuale
-  genera_figure_manuale.py     render e disegni quotati
   genera_manuale_pdf.py        impaginazione del PDF
-  genera_dae.py                assieme COLLADA per SketchUp
-  GP1_V4_2_assieme_SketchUp.dae
-  SHA256SUMS.txt               checksum di tutti i file
-  manuale/  render/            figure
-stl/
-  housing  cover  motor_bracket  output_gear  compound_gear  motor_pinion
-  mono_arm  lid_backplate  hall_plate  magnet_flag
-  accessori/GP1_electronics_box_MINI.stl
+  genera_dae.py                assieme per SketchUp
+  GP1_V6_assieme.dae           assieme COLLADA (SketchUp, Blender, FreeCAD...)
+  manuale/                     figure del manuale
+  SHA256SUMS.txt               checksum dei file
 ```
+
+## Il modello
+
+Apri `gp1_flipcap_V6.scad` con OpenSCAD e premi F5: compare l'assieme
+completo, con il tubo, il tappo e tutti i pezzi. `cap_angle` muove il tappo
+(0 = chiuso, -270 = parcheggiato), gli interruttori `show_*` accendono e
+spengono i singoli pezzi. Per esportare un pezzo imposta `part`, premi F6 ed
+esporta l'STL: esce già orientato per la stampa. Serve la libreria MCAD, già
+inclusa in OpenSCAD.
 
 ## Firmware
 
-Sketch per Arduino Nano, emula il protocollo Alnitak. Pilotaggio full-step a
-2 fasi attive con rampa di accelerazione, antirimbalzo sui finecorsa, limite di
-extracorsa a 8100 passi.
-
-Compilato e verificato:
+Sketch per Arduino Nano che emula il protocollo Alnitak: full-step a due fasi
+con rampa di accelerazione, antirimbalzo sui sensori, limite di passi e di
+tempo se un sensore non scatta, bobine spente a motore fermo. Il driver INDI
+ripete il comando dopo 30 secondi: il firmware riconosce la ripetizione e la
+ignora, e la corsa da 55 secondi finisce regolarmente.
 
 ```
-arduino-cli 1.3.1 - core arduino:avr 1.8.6 - avr-gcc 7.3.0-atmel3.6.1-arduino7
-flash 3594/30720 byte (11%) - RAM 261/2048 byte (12%) - 0 errori, 0 warning
+arduino-cli 1.3.1 - core arduino:avr 1.8.6 - fqbn arduino:avr:nano
+flash 3612/30720 byte (11%) - RAM 261/2048 byte (12%) - 0 errori, 0 warning
 ```
-
-Il `.hex` precompilato è in `firmware/build/` per chi vuole flashare senza
-installare l'IDE.
 
 ## Verifica geometrica
 
@@ -116,23 +115,20 @@ installare l'IDE.
 python docs/verifica_collisioni.py
 ```
 
-Campiona le mesh STL reali e controlla su tutta la corsa: integrità dei solidi,
-braccio contro scatola, staffa contro scatola e ingranaggi, disco del tappo
-contro scatola, braccio contro tubo, piastra sensori contro bandierina, ed
-extracorsa in avaria. Richiede numpy e scipy. Output corrente in
-[docs/VERIFICA_COLLISIONI.txt](docs/VERIFICA_COLLISIONI.txt).
+Esporta da OpenSCAD tutti i pezzi in posizione di montaggio e controlla sulle
+mesh: che ogni STL sia un solido unico, che i pezzi fermi non si
+compenetrino, le luci lungo tutta la corsa di 270° (braccio, contropiastra e
+disco del tappo contro scatola, coperchi, appoggi e tubo; bandierina contro
+sensori) e la posizione di parcheggio. Serve Python con numpy e scipy; impiega
+una ventina di minuti.
+Risultato attuale in [docs/VERIFICA_COLLISIONI.txt](docs/VERIFICA_COLLISIONI.txt).
 
-Luci minime verificate: disco/scatola 7,7 mm a fine apertura, braccio/scatola
-2,0 mm su tutta la corsa, braccio/tubo 2,5 mm, traferro magnetico 2,9 mm.
+## Se hai già stampato pezzi delle versioni precedenti
 
-## Se vieni dalla V4.1
-
-La V4.1 aveva tre difetti bloccanti (supporto motore staccato dalla scatola,
-braccio che compenetrava l'housing su tutta la corsa, tappo che sbatteva contro
-la scatola in apertura). L'housing stampato resta utilizzabile con quattro fori
-da fare: vedi l'appendice F del manuale e [CHANGELOG_V4.2.md](CHANGELOG_V4.2.md).
-
-I render di confronto sono in [docs/render/](docs/render/).
+Ingranaggi e bandierina hanno la stessa geometria dalla V4.1 in poi e si
+riusano; tutto il resto è nuovo. Nell'ingranaggio di uscita delle V4.x il foro
+del grano cadeva sulla faccia invece che nel mozzo: va forato come spiegato
+nell'appendice F del manuale. Il file della V6 ha già il foro giusto.
 
 ## Licenza
 
@@ -141,12 +137,12 @@ Testo completo in [LICENSE](LICENSE), sintesi in [NOTICE](NOTICE).
 
 Puoi usare, modificare e ridistribuire il progetto, anche commercialmente. Se
 distribuisci un prodotto basato su questi file o una versione modificata dei
-file stessi, devi rendere disponibile la sorgente completa corrispondente sotto
-la stessa licenza.
+file stessi, devi rendere disponibile la sorgente completa corrispondente
+sotto la stessa licenza.
 
 ## Avvertenza
 
 Progetto amatoriale fornito **così com'è, senza garanzia**. Le verifiche
 geometriche valgono per il modello con i parametri di default: se li cambi,
 rilancia la verifica. Chi monta questo meccanismo su un telescopio è
-responsabile della propria verifica meccanica ed elettrica.
+responsabile delle proprie verifiche meccaniche ed elettriche.
