@@ -730,9 +730,10 @@ def build(ui, dati):
       "ogni 3 gradi.", "small")
 
     h2("F. &nbsp;Se hai gi&agrave; stampato pezzi di versioni precedenti")
-    p("Gli <b>ingranaggi</b> (70T, composto, pignone) e la <b>bandierina</b> hanno la "
-      "stessa geometria dalla V4.1 in poi e si riusano. Tutto il resto &egrave; nuovo "
-      "e va stampato.")
+    p("Il <b>composto</b> e il <b>pignone</b> hanno la stessa geometria dalla V4.1 in poi "
+      "e si riusano; l'<b>ingranaggio di uscita</b> si riusa dopo averlo forato (qui "
+      "sotto). La <b>bandierina</b> della V4.1 ha la tasca del magnete chiusa dentro il "
+      "pezzo e va ristampata. Tutto il resto &egrave; nuovo e va stampato.")
     sp(2)
     callout("Attenzione all'ingranaggio di uscita delle V4.x.",
             "Nelle versioni precedenti il foro del grano cadeva sulla faccia dell'ingranaggio "

@@ -440,7 +440,7 @@ module compound_gear(){
 module motor_pinion(){ gear_x(motor_teeth,motor_shaft_d,gear_t,8.2,7); }
 
 // =============================================================================
-//  BANDIERINA DEL MAGNETE (stessa sagoma della V4.1)
+//  BANDIERINA DEL MAGNETE (sagoma della V4.1, tasca del magnete aperta verso i sensori)
 // =============================================================================
 module magnet_flag(){
     difference(){

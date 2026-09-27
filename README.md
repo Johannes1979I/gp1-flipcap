@@ -125,10 +125,12 @@ Risultato attuale in [docs/VERIFICA_COLLISIONI.txt](docs/VERIFICA_COLLISIONI.txt
 
 ## Se hai già stampato pezzi delle versioni precedenti
 
-Ingranaggi e bandierina hanno la stessa geometria dalla V4.1 in poi e si
-riusano; tutto il resto è nuovo. Nell'ingranaggio di uscita delle V4.x il foro
-del grano cadeva sulla faccia invece che nel mozzo: va forato come spiegato
-nell'appendice F del manuale. Il file della V6 ha già il foro giusto.
+Il composto e il pignone hanno la stessa geometria dalla V4.1 in poi e si
+riusano. L'ingranaggio di uscita si riusa dopo averlo forato: nelle V4.x il
+foro del grano cadeva sulla faccia invece che nel mozzo (appendice F del
+manuale); il file della V6 ha già il foro giusto. La bandierina della V4.1 ha
+la tasca del magnete chiusa dentro il pezzo e va ristampata. Tutto il resto è
+nuovo.
 
 ## Licenza
 
