@@ -29,6 +29,7 @@ da zero.
 | Protocollo | Alnitak Remote Dust Cover, product ID 98 (`indi_flipflat`) |
 | Default | tubo Ø362 mm (Sky-Watcher Quattro 300), tappo Ø374 mm, tutto parametrico |
 | Stampa | 14 file, circa 600 cm³ di PETG o ASA |
+| Logo | Osservatorio Jupiter, inciso sulla faccia anteriore della scatola (`logo=false` per toglierlo) |
 
 Non è un pannello per i flat: copre e scopre, non ha una luce.
 
@@ -94,7 +95,9 @@ completo, con il tubo, il tappo e tutti i pezzi. `cap_angle` muove il tappo
 (0 = chiuso, -270 = parcheggiato), gli interruttori `show_*` accendono e
 spengono i singoli pezzi. Per esportare un pezzo imposta `part`, premi F6 ed
 esporta l'STL: esce già orientato per la stampa. Serve la libreria MCAD, già
-inclusa in OpenSCAD.
+inclusa in OpenSCAD. `logo=false` toglie il logo inciso sulla scatola; il
+carattere è il Liberation Sans compreso in OpenSCAD, quindi l'STL esce uguale
+su ogni PC.
 
 ## Firmware
 

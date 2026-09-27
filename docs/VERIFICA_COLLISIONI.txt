@@ -10,7 +10,7 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    OK compound_gear      corpi=1    35.2 x   35.1 x   25.0 mm     4.9 cm3  base Z=0.00
    OK cover              corpi=1    70.0 x  123.0 x   11.2 mm    28.8 cm3  base Z=0.00
    OK hall_plate         corpi=1    55.3 x   55.3 x    8.2 mm     5.9 cm3  base Z=0.00
-   OK housing            corpi=1   205.0 x  196.6 x   72.0 mm   288.1 cm3  base Z=0.00
+   OK housing            corpi=1   205.0 x  196.6 x   72.0 mm   287.3 cm3  base Z=0.00
    OK magnet_flag        corpi=1    30.0 x   22.0 x    5.0 mm     1.9 cm3  base Z=0.00
    OK mono_arm           corpi=1    53.5 x  145.0 x   85.6 mm    69.2 cm3  base Z=0.00
    OK motor_bracket      corpi=1    42.0 x   45.2 x   19.7 mm     8.2 cm3  base Z=-0.00
@@ -35,7 +35,7 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    cover          <-> bay_lid        appoggio di faccia
    cover          <-> compound_gear  luce 3.19 mm
    motor_bracket  <-> compound_gear  luce 1.98 mm
-   motor_bracket  <-> motor_pinion   luce 2.78 mm
+   motor_bracket  <-> motor_pinion   luce 2.77 mm
    motor_bracket  <-> motor_dummy    appoggio di faccia
    hall_plate     <-> spacers        luce 1.75 mm
    hall_plate     <-> magnet_flag    luce 2.50 mm
@@ -49,11 +49,11 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    -> nessuna compenetrazione
 
 3) CORSA COMPLETA 0 -> -270 gradi
-      luce minima bandierina - piastra sensori        2.50 mm  (a -66 gradi)
+      luce minima bandierina - piastra sensori        2.50 mm  (a -243 gradi)
       luce minima braccio - appoggi                  43.90 mm  (a -264 gradi)
       luce minima braccio - bay_lid                  82.26 mm  (a -270 gradi)
       luce minima braccio - cover                    72.00 mm  (a 0 gradi)
-      luce minima braccio - housing                   8.00 mm  (a -111 gradi)
+      luce minima braccio - housing                   8.00 mm  (a -135 gradi)
       luce minima braccio - motor_bracket            56.31 mm  (a -261 gradi)
       luce minima braccio - tubo                     36.50 mm  (a -270 gradi)
       luce minima tappo - appoggi                    10.83 mm  (a -267 gradi)

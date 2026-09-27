@@ -63,7 +63,7 @@ def read_params():
              "nano_holes", "buck_pos", "buck_size", "buck_holes", "uln_pos", "uln_size",
              "uln_holes", "usb_hole", "jack_yz", "cable_slot", "compound_x", "hall_standoff",
              "hall_screw_a", "hall_screw_r", "magnet_r", "cav_x0", "mb_screws",
-             "bay_bosses", "rest_pad", "cap_thickness"]
+             "bay_bosses", "rest_pad", "cap_thickness", "cover_t"]
     with open(os.path.join(WORK, "probe.scad"), "w") as f:
         f.write("include <modello.scad>\n")
         for n in names:
@@ -184,7 +184,13 @@ def annotate(img, cam, labels, out, title, crop):
 
 
 BRG_MODULE = ('module brg(x0,yz,od,id,w){ at_yz(yz,x0) difference(){ x_cyl(od/2,w,false);'
-              ' translate([-1,0,0]) x_cyl(id/2,w+2,false); } }')
+              ' translate([-1,0,0]) x_cyl(id/2,w+2,false); } }\n'
+              # viteria per l'esploso: vite con la testa verso -X e il gambo verso +X
+              'module vite_x(d,l,dk,k){ x_cyl(d/2,l,false); translate([-k,0,0]) x_cyl(dk/2,k,false); }\n'
+              'module rondella_x(D,d,t){ difference(){ x_cyl(D/2,t,false); translate([-1,0,0]) x_cyl(d/2,t+2,false); } }\n'
+              'module dado_x(s,m,d){ difference(){ rotate([0,90,0]) cylinder(d=s/cos(30),h=m,$fn=6);'
+              ' translate([-1,0,0]) x_cyl(d/2,m+2,false); } }\n'
+              'module asse_x(yz,x0,x1){ for(x=[x0:7:x1-3]) at_yz(yz,x) x_cyl(0.45,4,false); }')
 BEARINGS_GEOM = ('union(){ brg(left_seat_x0,hinge_yz,19,6,6); brg(cover_seat_x0,hinge_yz,19,6,6);'
                  ' brg(compound_x+8.9,compound_yz,16,5,5); }')
 BEARINGS = ['color([0.80,0.82,0.86]) ' + BEARINGS_GEOM + ';']
@@ -398,6 +404,90 @@ def figure_renders(Pm):
         ("mozzo a morsetto", (60, hy, hz), (-220, -120), RED),
         ("piastra del braccio", (20, 170, 12), (-300, 60), RED),
         ("contropiastra", (30, 160, 21), (200, 230)),
+    ], None))
+
+    # F16 - esploso del riduttore: ogni pezzo sfila lungo il suo asse, nell'ordine in cui
+    # si monta. Le viti che entrano da fuori (albero, M5, piastra sensori, staffa) restano
+    # al loro posto o poco fuori; i pezzi che entrano dal lato aperto escono verso +X.
+    sl = {q[0]: q for q in Pm["spacer_list"]}
+    bx1, ct, cx, fx = Pm["box_x1"], Pm["cover_t"], Pm["compound_x"], Pm["flag_x"]
+    lsx, csx = Pm["left_seat_x0"], Pm["cover_seat_x0"]
+    # posizione in X del lato sinistro di ogni pezzo: (originale, esploso)
+    X = dict(brgL=(lsx, 172), hall=(Pm["cav_x0"], 186), s1=(sl["s1"][1], 204), flag=(fx - 2.5, 216),
+             s3=(sl["s3"][1], 229), g70=(sl["s3"][2], 258), s2=(sl["s2"][1], 276), brgC=(csx, 296),
+             c1=(sl["c1"][1], 180), ptfe=(sl["c1"][2], 218), comp=(cx - 11, 226), b625=(cx + 8.9, 256),
+             c2=(sl["c2"][1], 268), motor=(120.3, 283), pinion=(141, 318),
+             cover=(csx, 344), m5w=(bx1 + ct, 366), m5n=(bx1 + ct + 1, 372), cvs=(bx1 + ct - 8, 380))
+    dx = {k: v[1] - v[0] for k, v in X.items()}
+    T = lambda k, s: "translate([%.2f,0,0]) %s" % (dx[k], s)
+    SCR = "[0.30,0.31,0.35]"
+    hs = [(hy + Pm["hall_screw_r"] * np.sin(np.radians(a)), hz + Pm["hall_screw_r"] * np.cos(np.radians(a)))
+          for a in Pm["hall_screw_a"]]
+    explo = [housing_gear, "color(%s) shaft_dummy();" % C["shaft"],
+             # da fuori: vite M5 con rondella, due M3 x 16 della piastra, due M3 x 8 della staffa
+             "color(%s){ at_yz(compound_yz,box_x0-1) vite_x(5,90,8.5,5); at_yz(compound_yz,box_x0-1) rondella_x(10,5.3,1); }" % SCR,
+             "color(%s) for(p=[[%.2f,%.2f],[%.2f,%.2f]]) at_yz(p,box_x0-30) vite_x(3,16,5.5,3);" % (SCR, *hs[0], *hs[1]),
+             "color(%s) for(s=mb_screws) translate([s[0],box_y0-22,s[1]]) rotate([-90,0,0]){ cylinder(d=3,h=8); translate([0,0,-3]) cylinder(d=5.5,h=3); }" % SCR,
+             # asse di uscita
+             "color([0.80,0.82,0.86]) " + T("brgL", "brg(left_seat_x0,hinge_yz,19,6,6);"),
+             "color(%s) " % C["hall_plate"] + T("hall", 'part_placed("hall_plate");'),
+             "color(%s) " % C["spacers"] + T("s1", "spacer_placed(spacer_list[0]);"),
+             "color(%s) " % C["magnet_flag"] + T("flag", 'render() part_placed("magnet_flag",0);'),
+             "color(%s) " % C["spacers"] + T("s3", "spacer_placed(spacer_list[2]);"),
+             "color(%s) " % C["gears"] + T("g70", 'render() part_placed("output_gear");'),
+             "color(%s) " % C["spacers"] + T("s2", "spacer_placed(spacer_list[1]);"),
+             "color([0.80,0.82,0.86]) " + T("brgC", "brg(cover_seat_x0,hinge_yz,19,6,6);"),
+             # perno del composto
+             "color(%s) " % C["spacers"] + T("c1", "spacer_placed(spacer_list[3]);"),
+             "color([0.97,0.97,0.93]) " + T("ptfe", "at_yz(compound_yz,%.2f) rondella_x(10,5.3,1);" % sl["c1"][2]),
+             "color(%s) " % C["gears"] + T("comp", 'render() part_placed("compound_gear");'),
+             "color([0.80,0.82,0.86]) " + T("b625", "brg(compound_x+8.9,compound_yz,16,5,5);"),
+             "color(%s) " % C["spacers"] + T("c2", "spacer_placed(spacer_list[4]);"),
+             "color(%s) " % SCR + T("m5w", "at_yz(compound_yz,box_x1+cover_t) rondella_x(10,5.3,1);"),
+             "color(%s) " % SCR + T("m5n", "at_yz(compound_yz,box_x1+cover_t+1) dado_x(8,5,5);"),
+             # motore con la staffa, poi il pignone
+             "color(%s) " % C["motor_bracket"] + T("motor", 'render() part_placed("motor_bracket");'),
+             "color(%s) " % C["motor"] + T("motor", "motor_dummy();"),
+             "color(%s) " % SCR + T("motor", "for(e=byj_ears) at_yz(e,byj_face_x+14) mirror([1,0,0]) vite_x(3,8,5.5,3);"),
+             "color(%s) " % C["gears"] + T("pinion", 'render() part_placed("motor_pinion");'),
+             # coperchio e sue viti
+             "color([0.20,0.45,0.70]) " + T("cover", 'render() part_placed("cover");'),
+             "color(%s) " % SCR + T("cvs", "for(p=cover_screw_pts()) at_yz(p,box_x1+cover_t-8) mirror([1,0,0]) translate([-8,0,0]) vite_x(3,8,5.5,3);"),
+             # assi tratteggiati
+             "color([0.35,0.35,0.40]) { asse_x(hinge_yz,161,%.1f); asse_x(compound_yz,174,%.1f); asse_x(motor_yz,153,%.1f); }"
+             % (X["cover"][1] + 30, X["m5n"][1] + 12, X["pinion"][1] + 12)]
+    cam = Cam(to_view((225 + 700 * 0.42, 232 + 700 * 0.40, -25 + 700 * 0.815)), to_view((225, 232, -25)), (2100, 1250))
+
+    def L(text, p, tx, ty, col=INK):
+        """Etichetta con il riquadro nel punto (tx, ty) dell'immagine."""
+        ax_, ay_ = cam.px(p)
+        return (text, p, (tx - ax_, ty - ay_), col)
+
+    Ky, Kz = K
+    Mx = lambda k, a: X[k][1] + a                      # X esploso piu' un piccolo scarto
+    jobs.append(("F16_esploso.png", explo, cam, [
+        L("626ZZ", (Mx("brgL", 3), hy + 9.5, hz), 760, 165),
+        L("piastra sensori", (Mx("hall", 4), hy + 27, hz), 905, 110),
+        L("s1", (Mx("s1", 3), hy + 4.2, hz), 995, 270, BLU),
+        L("bandierina\n+ magnete", (Mx("flag", 2.5), hy + 11, hz), 1075, 175),
+        L("s3", (Mx("s3", 10), hy + 4.2, hz), 1078, 330, BLU),
+        L("ingranaggio 70T\n+ grano M3", (Mx("g70", 5), hy + 28.8, hz), 1265, 235),
+        L("s2", (Mx("s2", 6), hy + 4.2, hz), 1300, 385, BLU),
+        L("626ZZ", (Mx("brgC", 3), hy + 9.5, hz), 1425, 355),
+        L("coperchio", (Mx("cover", 11), 296, -10), 1580, 330),
+        L("4 viti M3 x 8", (Mx("cvs", 9), 294, 4), 1860, 560),
+        L("c1", (Mx("c1", 16), Ky - 4, Kz), 880, 765, BLU),
+        L("rondella PTFE", (Mx("ptfe", 0.5), Ky - 5, Kz), 950, 840),
+        L("composto\n42T / 14T", (Mx("comp", 15), Ky - 17.6, Kz), 1050, 960),
+        L("625ZZ", (Mx("b625", 2.5), Ky - 8, Kz), 1165, 865),
+        L("c2", (Mx("c2", 4.5), Ky - 3.7, Kz), 1225, 800, BLU),
+        L("rondella + dado\nautobloccante M5", (Mx("m5n", 2.5), Ky - 4.6, Kz), 1850, 760),
+        L("staffa + 28BYJ-48\n(2 viti M3 x 8)", (298, 190, -40), 1300, 1040, GRN),
+        L("pignone 14T", (Mx("pinion", 3.5), M[0] + 6.4, M[1]), 1480, 1110),
+        L("albero 6 x 100", (66, hy, hz), 235, 330),
+        L("2 viti M3 x 16\n(piastra sensori)", (52, hs[0][0], hs[0][1]), 215, 520),
+        L("vite M5 x 90\n(entra da fuori)", (166, Ky - 2.5, Kz), 835, 1085),
+        L("2 viti M3 x 8\n(staffa, da sotto)", (147.5, 152, -40), 590, 1010, GRN),
     ], None))
 
     only = set(filter(None, os.environ.get("FIGURE_ONLY", "").split(",")))

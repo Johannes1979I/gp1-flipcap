@@ -123,7 +123,8 @@ def build(ui, dati):
     sp(3)
     table([
         ["File", "Q.t&agrave;", "Cos'&egrave;", "Stampa"],
-        ["housing", "1", "scatola: riduttore, vano elettronica, due selle",
+        ["housing", "1", "scatola: riduttore, vano elettronica, due selle; "
+                         "logo inciso sulla faccia anteriore",
          "sul piatto la parete sinistra. Senza supporti; se la stampante fatica sugli "
          "sbalzi, supporti solo sotto le due selle"],
         ["cover", "1", "coperchio del riduttore, con la sede del secondo 626ZZ",
@@ -150,6 +151,13 @@ def build(ui, dati):
             "220 x 220 mm. Conviene lanciarlo per primo e stampare il resto mentre "
             "gira." % (dati["housing_x"], dati["housing_y"], dati["housing_z"]),
             kind="info")
+    callout("Il logo.",
+            "Sulla faccia anteriore del riduttore &egrave; inciso per 1 mm il logo "
+            "dell'Osservatorio Jupiter. In stampa quella faccia &egrave; verticale e il "
+            "logo esce nitido, senza supporti. Per farlo risaltare passa vernice acrilica "
+            "bianca nell'incisione e togli subito l'eccesso con un panno appena umido. "
+            "Per una scatola liscia: <font face='Courier'>logo=false</font> (appendice E).",
+            kind="info")
 
     h2("0.3 &nbsp;Materiale e impostazioni")
     table([
@@ -169,7 +177,8 @@ def build(ui, dati):
         ["1", "Albero in acciaio &Oslash;6 x 100 mm (tondo rettificato)", "albero di uscita"],
         ["2", "Cuscinetto 626ZZ (6 x 19 x 6)", "parete della scatola e coperchio"],
         ["1", "Cuscinetto 625ZZ (5 x 16 x 5)", "dentro il 42T del composto"],
-        ["1", "Vite M5 x 80 + 2 rondelle + dado autobloccante M5", "perno del composto"],
+        ["1", "Vite M5 x 90 a testa cilindrica + 2 rondelle + dado autobloccante M5",
+         "perno del composto (la x 80 &egrave; corta: il dado non si blocca)"],
         ["1", "Rondella PTFE o nylon M5, spessore 1 mm", "fra distanziale c1 e composto"],
         ["10", "Inserti filettati a caldo M3 (lunghezza 4-6 mm)",
          "4 coperchio riduttore, 4 coperchio vano, 2 staffa motore"],
@@ -208,7 +217,7 @@ def build(ui, dati):
 
     h2("0.6 &nbsp;Attrezzi")
     p("Saldatore e stagno &middot; saldatore con punta per inserti (o la punta normale "
-      "pulita) &middot; chiavi a brugola 1,5 / 2 / 2,5 / 3 mm &middot; chiave da 5,5, 7 "
+      "pulita) &middot; chiavi a brugola 1,5 / 2 / 2,5 / 3 / 4 mm &middot; chiave da 5,5, 7 "
       "e 8 mm &middot; piccola lima piatta e lima tonda &middot; cutter e riga "
       "&middot; multimetro &middot; metro da sarto &middot; trapano con punta da 4,5 mm "
       "(fori del tappo) &middot; un PC con l'IDE Arduino.")
@@ -297,15 +306,15 @@ def build(ui, dati):
         "allinearlo.",
         "Se un inserto va storto, riscaldalo e raddrizzalo subito: a freddo non si "
         "recupera pi&ugrave;.",
-    ])
+    ], serve="10 inserti filettati M3, saldatore, un pezzo di metallo piano")
 
     step("A3", "Il magnete nella bandierina", [
         "Il magnete va nella tasca sulla faccia della bandierina. <b>Non incollarlo "
         "ancora</b>: il sensore A3144 risponde a una sola faccia del magnete, e quale "
-        "sia lo scopri al passo C5. Per ora tienilo a pressione con un velo di nastro.",
+        "sia lo scopri al passo C6. Per ora tienilo a pressione con un velo di nastro.",
         "Segna con un pennarello una faccia del magnete: ti servir&agrave; per capire "
         "come girarlo.",
-    ])
+    ], serve="bandierina, magnete 6 x 3, nastro adesivo, pennarello")
 
     # =========================================================== PARTE B
     story.append(PageBreak())
@@ -426,7 +435,49 @@ def build(ui, dati):
     # =========================================================== PARTE C
     story.append(PageBreak())
     banner("Parte C - Il riduttore", "dall'housing vuoto al meccanismo tarato e chiuso")
-    figure("F05_housing.png", 132 * mm, "FIG. C1 - l'housing visto dal lato aperto")
+    p("Prima di cominciare guarda l'esploso. Ogni pezzo entra lungo il suo asse, "
+      "nell'ordine in cui lo vedi, dalla parete sinistra verso il coperchio. Le viti "
+      "disegnate a sinistra e sotto la scatola entrano da fuori: la vite M5 del composto, "
+      "le due M3 x 16 della piastra sensori e le due M3 x 8 della staffa. Anche l'albero "
+      "entra da fuori, attraverso il cuscinetto della parete.")
+    sp(3)
+    figure("F16_esploso.png", CW, "FIG. C1 - esploso del riduttore, nell'ordine di montaggio")
+
+    h2("Come &egrave; tenuto ogni pezzo")
+    table([
+        ["Pezzo", "Come &egrave; tenuto", "Viteria", "Passo"],
+        ["cuscinetti 626ZZ", "a pressione nella parete sinistra e nel coperchio, inseriti "
+         "dall'interno; battono su un labbro esterno", "-", "C1"],
+        ["piastra sensori", "avvitata alla parete sinistra su due asole, che la lasciano "
+         "ruotare di 7 gradi per parte per la taratura", "2 M3 x 16, 2 rondelle, 2 dadi", "C2"],
+        ["albero 6 x 100", "gira nei due 626ZZ. Il pacco s1 - bandierina - s3 - 70T - s2 "
+         "sta fra i due cuscinetti: chiuso il coperchio, l'albero non si sfila da nessuna "
+         "parte, senza anelli elastici", "-", "C3, C9"],
+        ["bandierina, ingranaggio 70T", "un grano ciascuno, stretto su un piano limato "
+         "sull'albero", "2 grani M3 x 5", "C3"],
+        ["magnete", "nella tasca della bandierina, incollato dopo la prova dei sensori",
+         "cianoacrilica", "C6"],
+        ["staffa motore", "sul fondo della scatola, avvitata da sotto negli inserti del "
+         "suo piede", "2 M3 x 8, 2 inserti", "A2, C4"],
+        ["motore 28BYJ-48", "orecchie avvitate alla staffa; i fori larghi delle orecchie "
+         "servono a registrare l'ingranamento", "2 M3 x 8 (si filettano nella plastica)", "C4, C7"],
+        ["composto 42T / 14T", "gira su un 625ZZ e sulla vite M5, che fa da perno fra "
+         "parete e coperchio; c1, c2 e la rondella PTFE lo tengono in posizione",
+         "M5 x 90, 2 rondelle, dado autobloccante", "C5, C9"],
+        ["pignone 14T", "a pressione sull'albero del motore, foro limato a D", "-", "A1, C7"],
+        ["coperchio del riduttore", "negli inserti dei quattro angoli", "4 M3 x 8, 4 inserti", "A2, C9"],
+        ["braccio", "mozzo a morsetto sull'albero, fuori dalla scatola", "M3 x 25 e dado", "D3"],
+        ["vassoio e schede", "vassoio fra il listello della parete e quello del "
+         "coperchio, senza viti; schede sulle colonnine", "viti autofilettanti", "B3, D1"],
+        ["coperchio del vano", "negli inserti del vano", "4 M3 x 8 svasate, 4 inserti", "A2, D1"],
+        ["scatola sul tubo", "due selle rivestite di EVA, due cinghie a strappo",
+         "2 cinghie da 25 mm", "D2"],
+        ["tappo", "stretto fra la piastra del braccio e la contropiastra",
+         "4 M4 x 16, rondelle larghe, dadi", "D4"],
+        ["appoggi del tappo", "una cinghia a strappo ciascuno, attorno al tubo", "2 cinghie", "D5"],
+    ], [34 * mm, CW - 107 * mm, 55 * mm, 18 * mm])
+
+    figure("F05_housing.png", 132 * mm, "FIG. C2 - l'housing visto dal lato aperto")
 
     step("C1", "Cuscinetti 626ZZ", [
         "Spingi un 626ZZ nella sede della parete sinistra <b>dall'interno</b> della "
@@ -435,7 +486,7 @@ def build(ui, dati):
         "interno.",
         "Se entrano troppo morbidi, una goccia di frenafiletti medio sul diametro "
         "esterno.",
-    ])
+    ], serve="2 cuscinetti 626ZZ, la scatola, il coperchio del riduttore")
 
     step("C2", "Piastra dei sensori - va montata prima dell'albero", [
         "Infila i due A3144 nelle loro sedi con la <b>faccia marcata verso l'alto</b>, "
@@ -444,16 +495,18 @@ def build(ui, dati):
         "La sede rivolta verso il <b>bordo anteriore</b> della scatola (lato tappo) "
         "&egrave; quella del sensore <b>CLOSED</b>; la sede rivolta verso il "
         "<b>fondo</b> della scatola (lato tubo) &egrave; quella del sensore "
-        "<b>OPEN</b>. Guarda la figura C2.",
+        "<b>OPEN</b>. Guarda la figura C3.",
         "Fissa la piastra con due viti M3 x 16 infilate <b>dall'esterno</b> della parete "
         "sinistra, rondella e dado dentro. Stringi appena: le asole servono alla "
-        "taratura del passo C5.",
+        "taratura del passo C6.",
         "Porta i quattro fili lungo la parete fino al passaggio in basso verso il vano, e "
         "fermali con una goccia di colla a caldo lontano dagli ingranaggi.",
     ], fig="F07_piastra_sensori.png", figw=110 * mm,
-        figcap="FIG. C2 - piastra dei sensori sulla parete sinistra, vista dall'interno")
+        figcap="FIG. C3 - piastra dei sensori sulla parete sinistra, vista dall'interno",
+        serve="piastra sensori, i due A3144 cablati al passo B6, 2 viti M3 x 16 con 2 "
+              "rondelle e 2 dadi, colla a caldo")
 
-    figure("F06_assi.png", CW, "FIG. C3 - l'ordine dei pezzi sui due assi")
+    figure("F06_assi.png", CW, "FIG. C4 - l'ordine dei pezzi sui due assi")
 
     step("C3", "Albero di uscita, distanziali, bandierina, ingranaggio 70T", [
         "Con una lima fai due piccoli piani sull'albero dove appoggeranno i grani: a "
@@ -470,12 +523,14 @@ def build(ui, dati):
         "Gira l'albero a mano: la bandierina non deve toccare la piastra dei sensori in "
         "nessun punto.",
     ], fig="F08_albero.png", figw=112 * mm,
-        figcap="FIG. C4 - albero con distanziali, bandierina e ingranaggio di uscita")
+        figcap="FIG. C5 - albero con distanziali, bandierina e ingranaggio di uscita",
+        serve="albero &Oslash;6 x 100, distanziali s1, s3 e s2, bandierina con il magnete, "
+              "ingranaggio 70T, 2 grani M3 x 5, lima piatta, brugola da 1,5 mm")
 
-    figure("F09b_28byj.png", 82 * mm, "FIG. C5 - il 28BYJ-48 visto dal lato dell'albero")
+    figure("F09b_28byj.png", 82 * mm, "FIG. C6 - il 28BYJ-48 visto dal lato dell'albero")
 
     step("C4", "Motore e staffa", [
-        "<b>Il 28BYJ-48 ha l'albero fuori centro di 8 mm</b> (figura C5): la staffa ha "
+        "<b>Il 28BYJ-48 ha l'albero fuori centro di 8 mm</b> (figura C6): la staffa ha "
         "gi&agrave; il foro nella posizione giusta, ma devi infilare il motore con il "
         "cappuccio azzurro dei fili verso l'intaglio della staffa.",
         "Il corpo del motore passa nel foro della staffa e le orecchie appoggiano sulla "
@@ -486,12 +541,15 @@ def build(ui, dati):
         "con due M3 x 8 negli inserti del piede.",
         "Il pignone <b>non</b> si monta ancora.",
     ], fig="F09_staffa_motore.png", figw=108 * mm,
-        figcap="FIG. C6 - staffa e motore montati sul fondo del riduttore")
+        figcap="FIG. C7 - staffa e motore montati sul fondo del riduttore",
+        serve="staffa motore, 28BYJ-48, 4 viti M3 x 8 (2 per le orecchie, 2 da sotto il "
+              "fondo), brugola da 2,5 mm")
 
     step("C5", "Ingranaggio composto", [
         "Pianta il 625ZZ nella sede del lato 42T del composto.",
-        "Infila la vite M5 x 80 <b>dall'esterno</b> della parete sinistra, con una "
-        "rondella sotto la testa.",
+        "Infila la vite M5 x 90 <b>dall'esterno</b> della parete sinistra, con una "
+        "rondella sotto la testa. Usala a testa cilindrica o esagonale, alta al massimo "
+        "5 mm: il braccio le passa accanto a 2 mm.",
         "Dall'interno infila sulla vite, in quest'ordine: il distanziale <b>c1</b> (il "
         "lungo), la <b>rondella in PTFE</b>, il <b>composto</b> (lato 14T verso la parete), "
         "il distanziale <b>c2</b>. Facendolo scorrere, ruotalo un poco finch&eacute; i "
@@ -499,7 +557,9 @@ def build(ui, dati):
         "Il composto deve girare libero e avere un filo di gioco assiale. La vite "
         "arriver&agrave; al coperchio al passo C9.",
     ], fig="F10_riduttore.png", figw=96 * mm,
-        figcap="FIG. C7 - il riduttore completo, visto dal lato del coperchio")
+        figcap="FIG. C8 - il riduttore completo, visto dal lato del coperchio",
+        serve="ingranaggio composto, cuscinetto 625ZZ, vite M5 x 90 con una rondella, "
+              "distanziali c1 e c2, rondella in PTFE")
 
     step("C6", "Taratura dei sensori, a mano", [
         "Collega l'elettronica preparata nella parte B e apri il monitor seriale. Il "
@@ -515,7 +575,7 @@ def build(ui, dati):
         "Per regolare il punto di scatto allenta le due viti della piastra e ruotala "
         "nelle asole, poi stringi. Le asole muovono insieme i due sensori, che restano "
         "sempre a 270 gradi l'uno dall'altro.",
-    ])
+    ], serve="l'elettronica della parte B collegata al PC, cianoacrilica")
 
     step("C7", "Pignone e ingranamento del motore", [
         "Infila il pignone sull'albero del motore fino al collarino: i denti devono "
@@ -527,7 +587,7 @@ def build(ui, dati):
         "Troppo stretto: il motore fatica e salta dei passi. Troppo lasco: i denti "
         "scavalcano sotto sforzo.",
         "<b>Da adesso il braccio non si gira pi&ugrave; a mano.</b>",
-    ])
+    ], serve="il pignone 14T gi&agrave; adattato al passo A1, brugola da 2,5 mm")
 
     step("C8", "Verso di rotazione e prova a vuoto", [
         "Manda <font face='Courier'>&gt;C000</font>: il meccanismo si porta sul sensore "
@@ -546,9 +606,13 @@ def build(ui, dati):
         "caldo o una fascetta.",
         "Appoggia il coperchio: l'albero di uscita entra nel suo 626ZZ e la vite M5 nel "
         "foro. Avvitalo con quattro M3 x 8.",
-        "Sulla vite M5, fuori dal coperchio: rondella e dado autobloccante, "
-        "<b>senza stringere</b>. Il composto deve continuare a girare libero.",
-    ])
+        "Sulla vite M5, fuori dal coperchio: rondella e dado autobloccante, portato a "
+        "contatto <b>senza stringere</b>. Il composto deve continuare a girare libero.",
+        "La vite deve uscire dal dado di qualche filetto, altrimenti l'anello di nylon "
+        "non la blocca: con la M5 x 90 ne escono circa 8 mm. Se vuoi accorciarla, "
+        "lasciane fuori almeno 3.",
+    ], serve="coperchio del riduttore con il suo 626ZZ, 4 viti M3 x 8, una rondella M5, "
+             "il dado autobloccante M5, chiave da 8 mm")
 
     # =========================================================== PARTE D
     story.append(PageBreak())
@@ -561,7 +625,8 @@ def build(ui, dati):
         "arrivano dal passaggio.",
         "Chiudi con il coperchio del vano: il suo listello interno tiene fermo "
         "l'altro bordo del vassoio. Quattro viti M3 x 8 svasate.",
-    ])
+    ], serve="vassoio con le schede (passo B3), coperchio del vano, 4 viti M3 x 8 a "
+             "testa svasata, brugola da 2 mm")
 
     step("D2", "Montare la scatola sul tubo", [
         "Incolla l'EVA da 2 mm sulla faccia interna delle due selle.",
@@ -574,18 +639,22 @@ def build(ui, dati):
         "costole, e stringi bene.",
         "Aggiungi circa 700 g in testa al tubo: <b>ribilancia la montatura</b>.",
     ], fig="F13_cinghie.png", figw=118 * mm,
-        figcap="FIG. D1 - le due cinghie passano sopra le selle, fra le costole")
+        figcap="FIG. D1 - le due cinghie passano sopra le selle, fra le costole",
+        serve="EVA adesiva da 2 mm, 2 cinghie a strappo da 25 mm")
 
     step("D3", "Braccio", [
         "Manda <font face='Courier'>&gt;C000</font>: l'albero si porta in posizione "
         "CLOSED.",
         "Infila il mozzo del braccio sull'albero, a filo dell'estremit&agrave;. Il mozzo "
         "&egrave; a morsetto: entra libero.",
+        "Non spostarlo verso la scatola: fra mozzo e parete restano 8 mm, e la testa "
+        "della vite M5 con la sua rondella ne occupa 6.",
         "Orienta il braccio in modo che la sua piastra sia davanti alla bocca del tubo e "
         "<b>parallela</b> alla bocca, e stringi la vite M3 x 25 con il dado nella sua sede. "
         "Stringi deciso: &egrave; questo morsetto che trasmette tutta la coppia.",
     ], fig="F14_braccio.png", figw=104 * mm,
-        figcap="FIG. D2 - braccio e contropiastra")
+        figcap="FIG. D2 - braccio e contropiastra",
+        serve="braccio, vite M3 x 25 con il dado, brugola da 2,5 mm, chiave da 5,5 mm")
 
     step("D4", "Tappo", [
         "Traccia il cerchio con uno spago e una puntina e taglia il disco con il cutter "
@@ -599,7 +668,8 @@ def build(ui, dati):
         "Facoltativo, per i dark: un anello di gomma crepla sul lato interno del tappo, "
         "alto quanto basta a sfiorare l'anello del tubo. Pesa: rileggi il margine al "
         "capitolo 0.7.",
-    ])
+    ], serve="lastra del tappo, contropiastra, 4 viti M4 x 16, 4 rondelle larghe, "
+             "4 dadi M4, trapano con punta da 4,5 mm, cutter, spago e puntina")
 
     step("D5", "Appoggi del tappo", [
         "Incolla 2 mm di EVA sulla faccia superiore di ogni appoggio e sotto, dove tocca "
@@ -612,7 +682,8 @@ def build(ui, dati):
         "si ferma prima, sollevato di qualche millimetro, aggiungi EVA; se si posa e il "
         "motore continua a girare, toglila.",
     ], fig="F15_appoggi.png", figw=CW,
-        figcap="FIG. D3 - posizioni lungo il tubo, misurate dalla bocca")
+        figcap="FIG. D3 - posizioni lungo il tubo, misurate dalla bocca",
+        serve="2 appoggi del tappo, 2 cinghie a strappo, EVA adesiva da 2 mm")
 
     step("D6", "Collaudo", [
         "Apri e chiudi almeno dieci volte di seguito: lo stato finale deve essere "
@@ -720,6 +791,7 @@ def build(ui, dati):
         ["diametro del tappo", "cap_d", "nessuno: &egrave; solo la misura a cui tagli il disco"],
         ["fori delle schede", "nano_holes, uln_holes, buck_holes", "bay_tray"],
         ["distanza degli appoggi", "rest_z", "nessuno"],
+        ["logo sulla scatola", "logo=false", "housing"],
     ], [38 * mm, 58 * mm, CW - 96 * mm])
     p("Da riga di comando, un pezzo alla volta:")
     code("openscad -o stl/housing.stl -D 'part=\"housing\"' -D ota_d=355 gp1_flipcap_V6.scad")

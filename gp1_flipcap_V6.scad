@@ -14,6 +14,7 @@
     complessi vengono calcolati per intero (render()); poi restano in cache.
   - cap_angle muove il tappo: 0 = chiuso, -270 = parcheggiato sul tubo.
   - Gli interruttori show_* accendono e spengono i singoli pezzi.
+  - logo=false toglie il logo dell'Osservatorio Jupiter inciso sulla scatola.
   - Per esportare un pezzo: imposta part (elenco sotto), premi F6 e poi
     File > Export > STL. Il pezzo esce gia' orientato per la stampa.
   - Da riga di comando:
@@ -245,6 +246,20 @@ jack_d=8.2;
 cable_slot=[92,130,190,202];    // X0,X1,Y0,Y1: passaggio cavi riduttore -> vano
 
 // =============================================================================
+//  LOGO DELL'OSSERVATORIO JUPITER
+//  Inciso sulla faccia anteriore della scatola del riduttore (Z = box_z1), che
+//  nessun pezzo copre in tutta la corsa: Giove con le bande e la Grande Macchia
+//  Rossa, i quattro satelliti medicei scoperti da Galileo nel 1610 e il nome
+//  dell'osservatorio. In stampa quella faccia e' una parete verticale: il
+//  logo viene nitido, senza supporti. logo=false per la scatola liscia.
+// =============================================================================
+logo=true;
+logo_depth=1.0;                             // profondita' dell'incisione
+logo_font="Liberation Sans:style=Bold";     // inclusa in OpenSCAD: lo stesso STL su ogni PC
+logo_top=268;                               // Y del bordo alto del disco di Giove
+jup_r=17;                                   // raggio del disco di Giove
+
+// =============================================================================
 //  FUNZIONI DI SERVIZIO
 // =============================================================================
 module x_cyl(r,h,center=true){ rotate([0,90,0]) cylinder(r=r,h=h,center=center); }
@@ -279,6 +294,39 @@ module tube_shell(r0,r1,x0,x1,z0,z1){
         }
         translate([x0,0,z0-1]) cube([x1-x0,r1+1,z1-z0+2]);
     }
+}
+
+// logo in 2D: x sulla faccia a partire da box_x, y = Y globale.
+// Le parti disegnate sono quelle incise.
+module jupiter_grs(r){ translate([0.30*r,-0.43*r]) scale([1,0.6]) circle(r=0.18*r); }
+
+module jupiter_2d(r){
+    difference(){ circle(r=r); circle(r=r-1.2); }                  // bordo del disco
+    intersection(){
+        circle(r=r-0.6);
+        difference(){
+            // bande scure, da sud a nord, in frazioni del raggio
+            for(b=[[-0.62,-0.52],[-0.40,-0.14],[0.12,0.34],[0.46,0.54]])
+                translate([-r,b[0]*r]) square([2*r,(b[1]-b[0])*r]);
+            offset(r=1) jupiter_grs(r);                            // la baia della Macchia
+        }
+    }
+    jupiter_grs(r);                                                // Grande Macchia Rossa
+}
+
+module logo_2d(){
+    k=0.935;                                   // Giove e' schiacciato ai poli
+    translate([0,logo_top-jup_r*k]){
+        scale([1,k]) jupiter_2d(jup_r);
+        // Io, Ganimede, Europa, Callisto allineati sull'equatore, come li disegnava Galileo
+        for(m=[[-1.28,1.5],[-1.68,1.8],[1.25,1.35],[1.70,1.65]])
+            translate([m[0]*jup_r,0]) circle(r=m[1]);
+    }
+    y0=logo_top-2*jup_r*k;                     // bordo basso del disco
+    translate([0,y0-11])
+        text("OSSERVATORIO",size=5.2,font=logo_font,halign="center",spacing=1.08);
+    translate([0,y0-26.5])
+        text("JUPITER",size=10,font=logo_font,halign="center",spacing=1.04);
 }
 
 // =============================================================================
@@ -353,6 +401,8 @@ module housing_cuts(){
     for(p=bay_bosses) at_yz(p,bay_x1-6.5) x_cyl(2.0,7,false);
     // sfiati sulla parete posteriore del vano
     for(y=[176,184,192,200]) translate([96,y,bay_z0-1]) cube([44,3,bay_wall+2]);
+    // logo sulla faccia anteriore del riduttore
+    if(logo) translate([box_x,0,box_z1-logo_depth]) linear_extrude(logo_depth+1) logo_2d();
 }
 
 module housing(){

@@ -111,8 +111,12 @@ def banner(text, sub=""):
     sp(9)
 
 
-def step(num, title, lines, fig=None, figw=None, figcap=None, keep=True):
-    """Un passo numerato: pallino col numero, titolo, elenco puntato."""
+S["serve"] = ParagraphStyle("serve", parent=S["body"], fontSize=9, leading=12,
+                            alignment=0, backColor=BG, borderPadding=(3, 4, 3, 4))
+
+
+def step(num, title, lines, fig=None, figw=None, figcap=None, keep=True, serve=None):
+    """Un passo numerato: pallino col numero, titolo, cosa serve, elenco puntato."""
     badge = Table([[Paragraph(
         '<font color="white" size="12"><b>%s</b></font>' % num, S["cell"])]],
         colWidths=[13 * mm], rowHeights=[9 * mm])
@@ -122,6 +126,9 @@ def step(num, title, lines, fig=None, figw=None, figcap=None, keep=True):
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ]))
     body = [Paragraph(title, S["step"]), Spacer(1, 3)]
+    if serve:
+        body += [Spacer(1, 2), Paragraph('<font color="#1f6fb2"><b>Ti serve:</b></font> ' + serve,
+                                         S["serve"]), Spacer(1, 6)]
     for ln in lines:
         body.append(Paragraph("&bull;&nbsp;&nbsp;" + ln, S["body"]))
         body.append(Spacer(1, 1.5))
