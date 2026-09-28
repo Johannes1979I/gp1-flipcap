@@ -16,7 +16,9 @@ ALTRI FILE
 
   README.md              panoramica del progetto
   gp1_flipcap_V6.scad    modello parametrico (OpenSCAD): F5 mostra l'assieme
-  stl/                   i 14 pezzi da stampare, gia' orientati
+  stl/                   i 14 pezzi da stampare, gia' orientati, piu'
+                         test_shaft e test_pin: assi di prova in plastica
+                         (facoltativi), per provare prima dell'acciaio
   firmware/              sketch Arduino + .hex precompilato
   docs/                  distinte, schema dei collegamenti, verifica geometrica,
                          assieme per SketchUp

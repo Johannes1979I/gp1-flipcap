@@ -17,6 +17,8 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    OK motor_pinion       corpi=1    12.8 x   12.6 x    7.0 mm     0.5 cm3  base Z=0.00
    OK output_gear        corpi=1    57.6 x   57.6 x   10.0 mm    15.8 cm3  base Z=0.00
    OK spacers            corpi=5    64.0 x    8.5 x   32.8 mm     2.1 cm3  base Z=0.00
+   OK test_pin           corpi=2    85.2 x   23.5 x    6.3 mm     1.9 cm3  base Z=0.00
+   OK test_shaft         corpi=1   100.0 x    5.9 x    5.3 mm     2.6 cm3  base Z=0.00
    -> tutti i pezzi sono solidi unici
    -> materiale totale (appoggi x2): 605 cm3
 
@@ -35,7 +37,7 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    cover          <-> bay_lid        appoggio di faccia
    cover          <-> compound_gear  luce 3.19 mm
    motor_bracket  <-> compound_gear  luce 1.98 mm
-   motor_bracket  <-> motor_pinion   luce 2.77 mm
+   motor_bracket  <-> motor_pinion   luce 2.78 mm
    motor_bracket  <-> motor_dummy    appoggio di faccia
    hall_plate     <-> spacers        luce 1.75 mm
    hall_plate     <-> magnet_flag    luce 2.50 mm
@@ -49,11 +51,11 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    -> nessuna compenetrazione
 
 3) CORSA COMPLETA 0 -> -270 gradi
-      luce minima bandierina - piastra sensori        2.50 mm  (a -243 gradi)
+      luce minima bandierina - piastra sensori        2.50 mm  (a -201 gradi)
       luce minima braccio - appoggi                  43.90 mm  (a -264 gradi)
       luce minima braccio - bay_lid                  82.26 mm  (a -270 gradi)
       luce minima braccio - cover                    72.00 mm  (a 0 gradi)
-      luce minima braccio - housing                   8.00 mm  (a -135 gradi)
+      luce minima braccio - housing                   8.00 mm  (a -192 gradi)
       luce minima braccio - motor_bracket            56.31 mm  (a -261 gradi)
       luce minima braccio - tubo                     36.50 mm  (a -270 gradi)
       luce minima tappo - appoggi                    10.83 mm  (a -267 gradi)

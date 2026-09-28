@@ -345,9 +345,10 @@ def main():
         v = tri.reshape(-1, 3)
         size = v.max(0) - v.min(0)
         vol = volume(tri)
-        total += vol * (2 if f.startswith("cap_rest") else 1)
-        # i distanziali sono cinque tubetti separati per scelta
-        expected = 5 if f.startswith("spacers") else 1
+        # gli assi di prova sono facoltativi: non entrano nel totale
+        total += 0 if f.startswith("test_") else vol * (2 if f.startswith("cap_rest") else 1)
+        # i distanziali sono cinque tubetti separati per scelta; il perno di prova ha la sua ghiera
+        expected = 5 if f.startswith("spacers") else (2 if f.startswith("test_pin") else 1)
         good = n_isl == expected
         ok_all &= good
         say("   %s %-18s corpi=%d  %6.1f x %6.1f x %6.1f mm  %6.1f cm3  base Z=%.2f"

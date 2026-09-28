@@ -44,6 +44,7 @@ part="assembly";
 // bay_lid | bay_tray |
 // output_gear | compound_gear | motor_pinion | magnet_flag |
 // mono_arm | cap_backplate | cap_rest
+// test_shaft | test_pin      (facoltativi: assi di prova in plastica, solo orient="print")
 
 orient="print";   // print  = orientato per la stampa (e' quello che sta in stl/)
                   // placed = nella posizione di montaggio (per le verifiche)
@@ -660,6 +661,53 @@ module bay_tray(){
 }
 
 // =============================================================================
+//  ASSI DI PROVA IN PLASTICA (facoltativi)
+//  Servono a provare montaggio, ingranamento e sensori prima di tagliare
+//  l'albero d'acciaio e di comprare la vite M5. Si stampano sdraiati: il
+//  piano per tutta la lunghezza li tiene sul piatto e fa da sede ai grani.
+//  Diametri un decimo sotto il nominale: entrano nei cuscinetti senza forzare.
+//  Non vanno sul telescopio: sotto i grani e nel morsetto del braccio il PLA
+//  cede con il tempo.
+// =============================================================================
+test_shaft_d=5.9;     // albero di prova (l'acciaio e' 6)
+test_pin_d=4.9;       // perno di prova del composto (al posto della vite M5)
+test_flat=0.6;        // profondita' del piano
+test_pin_len=box_x1+cover_t-box_x0+7;    // parete, riduttore, coperchio e ghiera
+
+// tondo lungo Z con smussi di 0,5 mm alle due estremita'
+module rod_z(d,l,c=0.5){
+    rotate_extrude($fn=96) polygon([[0,0],[d/2-c,0],[d/2,c],[d/2,l-c],[d/2-c,l],[0,l]]);
+}
+
+// tutto quello che sta sotto il piano, per un pezzo sdraiato lungo X di raggio r
+module below_flat(r,l){ translate([-1,-r-6,-r-6]) cube([l+2,2*r+12,6+test_flat]); }
+
+module test_shaft(){
+    r=test_shaft_d/2;
+    translate([0,0,r-test_flat]) difference(){
+        rotate([0,90,0]) rod_z(test_shaft_d,shaft_len);
+        below_flat(r,shaft_len);
+    }
+}
+
+module test_pin(){
+    r=test_pin_d/2;
+    translate([0,0,r-test_flat]) difference(){
+        rotate([0,90,0]) union(){
+            cylinder(d=9,h=3,$fn=72);                              // testa, fuori dalla parete
+            translate([0,0,3]) rod_z(test_pin_d,test_pin_len);
+        }
+        below_flat(r,test_pin_len+3);
+    }
+    // ghiera elastica: si infila sul perno fuori dal coperchio
+    translate([test_pin_len/2,14,0]) difference(){
+        cylinder(d=10,h=5,$fn=72);
+        translate([0,0,-1]) cylinder(d=test_pin_d-0.2,h=7,$fn=48);
+        translate([0,-0.6,-1]) cube([6,1.2,7]);                    // taglio: fa molla
+    }
+}
+
+// =============================================================================
 //  SAGOME PER L'ASSIEME (non si stampano)
 // =============================================================================
 ota_len=650;
@@ -731,6 +779,8 @@ module part_print(p){
     else if(p=="mono_arm") translate([0,0,8]) rotate([0,90,0]) mono_arm();
     else if(p=="cap_backplate") cap_backplate();
     else if(p=="cap_rest") translate([0,0,hinge_y-arm_dz-cap_thickness/2-rest_pad]) rotate([-90,0,0]) cap_rest();
+    else if(p=="test_shaft") test_shaft();
+    else if(p=="test_pin") test_pin();
     else echo(str("PEZZO SCONOSCIUTO: ",p));
 }
 

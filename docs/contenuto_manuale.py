@@ -55,7 +55,8 @@ def build(ui, dati):
         ["<b>D. Sul telescopio</b>", "cinghie, braccio, tappo, appoggi, collaudo, Ekos"],
         ["<b>Appendici</b>",
          "comandi seriali, coppia e peso del tappo, diagnostica, limiti verificati, "
-         "rigenerare i pezzi, chi ha gi&agrave; pezzi di versioni precedenti"],
+         "rigenerare i pezzi, chi ha gi&agrave; pezzi di versioni precedenti, "
+         "assi di prova in plastica"],
     ], [42 * mm, CW - 42 * mm])
     callout("L'ordine dei passi conta.",
             "Alcune viti non si raggiungono pi&ugrave; dopo aver montato altri pezzi, e "
@@ -145,6 +146,10 @@ def build(ui, dati):
         ["cap_backplate", "1", "contropiastra del tappo", "in piano"],
         ["cap_rest", "<b>2</b>", "appoggi del tappo sul tubo",
          "faccia d'appoggio sul piatto"],
+        ["test_shaft", "1", "<i>facoltativo:</i> albero di prova in plastica",
+         "sdraiato, come nel file; vedi sotto"],
+        ["test_pin", "1", "<i>facoltativo:</i> perno di prova del composto, con la ghiera",
+         "sdraiato, come nel file; vedi sotto"],
     ], [27 * mm, 11 * mm, 58 * mm, CW - 96 * mm])
     callout("L'housing &egrave; grande.",
             "Occupa %s x %s mm sul piatto e %s mm di altezza: ci sta su un piatto da "
@@ -158,6 +163,12 @@ def build(ui, dati):
             "bianca nell'incisione e togli subito l'eccesso con un panno appena umido. "
             "Per una scatola liscia: <font face='Courier'>logo=false</font> (appendice E).",
             kind="info")
+    callout("Assi di prova (facoltativi).",
+            "<font face='Courier'>test_shaft</font> e <font face='Courier'>test_pin</font> "
+            "sono l'albero d'acciaio e la vite M5 in versione stampata: servono a montare e "
+            "provare il riduttore prima di tagliare l'albero e di comprare la vite. Come "
+            "stamparli, cosa si pu&ograve; provare con loro e cosa no: appendice G.",
+            kind="info")
 
     h2("0.3 &nbsp;Materiale e impostazioni")
     table([
@@ -166,10 +177,12 @@ def build(ui, dati):
         ["ingranaggi", "PETG, ASA o PA", "0,12-0,16 mm", "5 o pi&ugrave;", "50-100%"],
         ["piastra sensori, bandierina, contropiastra, vassoio", "PETG o ASA", "0,20 mm", "3", "30%"],
         ["distanziali", "PETG o ASA", "0,15 mm", "tutti", "100%"],
+        ["assi di prova (facoltativi, appendice G)", "PLA", "0,12 mm", "8", "100% rettilineo"],
     ], [60 * mm, 28 * mm, 22 * mm, 20 * mm, CW - 130 * mm])
-    callout("Il PLA non va bene.",
+    callout("Il PLA non va bene per i pezzi definitivi.",
             "La scatola sta al sole del pomeriggio prima della sessione e il motore "
-            "scalda: il PLA si deforma gi&agrave; a 55-60 gradi. Usa PETG o ASA.")
+            "scalda: il PLA si deforma gi&agrave; a 55-60 gradi. Usa PETG o ASA. Il PLA va "
+            "bene solo per gli assi di prova, che non restano sul telescopio.")
 
     h2("0.4 &nbsp;Viteria e minuteria")
     table([
@@ -522,6 +535,9 @@ def build(ui, dati):
         "dell'albero.",
         "Gira l'albero a mano: la bandierina non deve toccare la piastra dei sensori in "
         "nessun punto.",
+        "<i>Con l'albero di prova</i> (appendice G): non c'&egrave; niente da limare, il "
+        "piano corre per tutta la lunghezza. Giralo in modo che i due grani appoggino sul "
+        "piano e stringili senza forzare.",
     ], fig="F08_albero.png", figw=112 * mm,
         figcap="FIG. C5 - albero con distanziali, bandierina e ingranaggio di uscita",
         serve="albero &Oslash;6 x 100, distanziali s1, s3 e s2, bandierina con il magnete, "
@@ -556,6 +572,8 @@ def build(ui, dati):
         "denti entrano fra quelli del 70T.",
         "Il composto deve girare libero e avere un filo di gioco assiale. La vite "
         "arriver&agrave; al coperchio al passo C9.",
+        "<i>Con il perno di prova</i> (appendice G): infilalo come la vite, senza rondella: "
+        "la testa fa da rondella.",
     ], fig="F10_riduttore.png", figw=96 * mm,
         figcap="FIG. C8 - il riduttore completo, visto dal lato del coperchio",
         serve="ingranaggio composto, cuscinetto 625ZZ, vite M5 x 90 con una rondella, "
@@ -611,6 +629,8 @@ def build(ui, dati):
         "La vite deve uscire dal dado di qualche filetto, altrimenti l'anello di nylon "
         "non la blocca: con la M5 x 90 ne escono circa 8 mm. Se vuoi accorciarla, "
         "lasciane fuori almeno 3.",
+        "<i>Con il perno di prova</i>: al posto di rondella e dado infila la ghiera fuori "
+        "dal coperchio, fino a sfiorarlo.",
     ], serve="coperchio del riduttore con il suo 626ZZ, 4 viti M3 x 8, una rondella M5, "
              "il dado autobloccante M5, chiave da 8 mm")
 
@@ -652,6 +672,9 @@ def build(ui, dati):
         "Orienta il braccio in modo che la sua piastra sia davanti alla bocca del tubo e "
         "<b>parallela</b> alla bocca, e stringi la vite M3 x 25 con il dado nella sua sede. "
         "Stringi deciso: &egrave; questo morsetto che trasmette tutta la coppia.",
+        "<i>Con l'albero di prova</i>: stringi il morsetto con giudizio, la plastica cede. "
+        "Per provare la corsa con il tappo monta la vite M5 vera al posto del perno di "
+        "prova (appendice G).",
     ], fig="F14_braccio.png", figw=104 * mm,
         figcap="FIG. D2 - braccio e contropiastra",
         serve="braccio, vite M3 x 25 con il dado, brugola da 2,5 mm, chiave da 5,5 mm")
@@ -814,6 +837,52 @@ def build(ui, dati):
             "punta da 2,5 mm, e usa una vite M3 che si filetta da sola. Il file "
             "<font face='Courier'>output_gear.stl</font> della V6 ha gi&agrave; il foro "
             "giusto.")
+
+    h2("G. &nbsp;Assi di prova in plastica (facoltativi)")
+    p("<font face='Courier'>test_shaft</font> e <font face='Courier'>test_pin</font> sono "
+      "l'albero di uscita e il perno del composto in versione stampata. Servono a montare e "
+      "provare il riduttore prima di tagliare l'albero d'acciaio e di comprare la vite M5. "
+      "Il perno di prova ha una ghiera elastica che si infila a pressione e prende il posto "
+      "del dado. I diametri sono un decimo sotto il nominale (5,9 e 4,9 mm): entrano nei "
+      "cuscinetti senza forzare. Se ballano, una passata di nastro adesivo; se sono stretti, "
+      "carta vetrata fine. Il piano lungo tutto l'asse li tiene sul piatto e fa da sede ai "
+      "grani.")
+    sp(3)
+    table([
+        ["Impostazione (Bambu Studio)", "Valore", "Perch&eacute;"],
+        ["profilo", "0.12mm High Quality", "layer sottili e pareti esterne lente: il tondo viene preciso"],
+        ["pareti", "8", "il pezzo &egrave; tutto pareti che corrono lungo l'asse"],
+        ["riempimento", "100%, rettilineo", "pieno; il riempimento a griglia non accetta il 100%"],
+        ["altezza Z precisa", "s&igrave;", "il diametro viene giusto anche in verticale"],
+        ["supporti", "no", "il piano lungo l'asse appoggia sul piatto"],
+        ["orientamento", "sdraiati, come nel file", "le linee lungo l'asse resistono meglio a flessione e torsione"],
+        ["materiale", "PLA o PLA+", "fra i filamenti comuni &egrave; il pi&ugrave; rigido: il PETG si flette di pi&ugrave;"],
+    ], [42 * mm, 36 * mm, CW - 78 * mm])
+    p("Sull'A1 i due assi insieme richiedono circa 17 minuti e 5,5 g di filamento.", "small")
+    sp(3)
+    table([
+        ["Prova", "Con gli assi di plastica"],
+        ["montaggio, ordine dei passi, ingranamento girando a mano", "s&igrave;"],
+        ["taratura dei sensori (passo C6)", "s&igrave;"],
+        ["corsa del motore senza tappo (passo C8)", "s&igrave;"],
+        ["corsa con il tappo montato", "solo con la vite M5 vera al posto del perno di prova"],
+        ["uso sul telescopio", "no: albero d'acciaio e vite M5"],
+    ], [100 * mm, CW - 100 * mm])
+    callout("Perch&eacute; non sotto carico.",
+            "Con il tappo montato i denti spingono sul composto con 8-12 N. Il perno di prova, "
+            "lungo 68 mm fra parete e coperchio, si flette di 0,5-1 mm: pi&ugrave; di met&agrave; "
+            "dell'altezza utile dei denti, e il 14T pu&ograve; saltare sul 70T. L'albero di prova "
+            "regge, ma fra ingranaggio e braccio si torce di circa 5 gradi, e se il tappo resta "
+            "chiuso per giorni la torsione diventa permanente. I grani affondano nella "
+            "plastica: stringili senza forzare. Sopra i 55-60 gradi il PLA si ammorbidisce: "
+            "niente prove al sole.")
+    p("<b>Per passare all'acciaio</b>: sfila la ghiera, apri il coperchio, allenta i due "
+      "grani e il morsetto e togli il braccio. Spingi dentro l'albero d'acciaio dal lato del "
+      "braccio, con i piani gi&agrave; limati (passo C3): quello di plastica esce "
+      "dall'altra parte, e distanziali, bandierina e ingranaggio restano infilati. Allo "
+      "stesso modo spingi dentro la vite M5 dal lato della testa del perno: il perno esce e "
+      "il composto resta al suo posto (passo C5). Richiudi (C9) e ricontrolla la taratura "
+      "dei sensori (C6) e la posizione del braccio (D3).")
     sp(8)
     p("<i>Documento generato automaticamente: docs/genera_figure_manuale.py crea le "
       "figure dal modello, docs/genera_manuale_pdf.py impagina, "

@@ -28,7 +28,7 @@ da zero.
 | Fissaggio | due selle e due cinghie a strappo da 25 mm |
 | Protocollo | Alnitak Remote Dust Cover, product ID 98 (`indi_flipflat`) |
 | Default | tubo Ø362 mm (Sky-Watcher Quattro 300), tappo Ø374 mm, tutto parametrico |
-| Stampa | 14 file, circa 600 cm³ di PETG o ASA |
+| Stampa | 14 file, circa 600 cm³ di PETG o ASA; più 2 assi di prova facoltativi |
 | Logo | Osservatorio Jupiter, inciso sulla faccia anteriore della scatola (`logo=false` per toglierlo) |
 
 Non è un pannello per i flat: copre e scopre, non ha una luce.
@@ -71,7 +71,9 @@ Per un tappo più pesante serve un motore più forte (NEMA 14 o 17).
 MANUALE_MONTAGGIO_V6.pdf       manuale di costruzione illustrato
 gp1_flipcap_V6.scad            modello parametrico: tutti i pezzi e l'assieme
 LICENSE / NOTICE               CERN-OHL-S v2
-stl/                           i 14 pezzi da stampare, già orientati
+stl/                           i 14 pezzi da stampare, già orientati, più
+                               test_shaft e test_pin: assi di prova in
+                               plastica, per provare prima dell'acciaio
 firmware/
   GP1_FlipCap_V6/              sketch Arduino
   build/                       .hex precompilato per Nano + istruzioni avrdude
