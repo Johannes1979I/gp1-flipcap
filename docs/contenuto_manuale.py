@@ -201,7 +201,7 @@ def build(ui, dati):
          "2 orecchie del motore (si filettano da sole nella plastica)"],
         ["2", "Viti M3 x 16 + rondelle + dadi", "piastra sensori, dalla parete sinistra"],
         ["1", "Vite M3 x 25 + dado", "morsetto del mozzo del braccio"],
-        ["2", "Grani M3 x 5", "bandierina e ingranaggio di uscita"],
+        ["3", "Grani M3 x 5", "bandierina, ingranaggio di uscita, pignone del motore"],
         ["4", "Viti M4 x 16 + rondelle larghe + dadi M4", "tappo sul braccio"],
         ["4", "Viti autofilettanti 1,7 x 6 (o M1,6)", "Arduino Nano sulle colonnine"],
         ["6-8", "Viti autofilettanti M3 x 6", "ULN2003 e LM2596 sulle colonnine"],
@@ -304,9 +304,9 @@ def build(ui, dati):
         "<b>Albero da 6 mm</b>: deve scorrere senza gioco nei distanziali s1, s2, s3, "
         "nella bandierina e nell'ingranaggio di uscita.",
         "<b>Perno M5</b>: deve scorrere nei distanziali c1 e c2 e nell'ingranaggio composto.",
-        "<b>Pignone</b>: il foro &egrave; volutamente stretto e tondo. L'albero del "
-        "28BYJ ha due piani: lima il foro a forma di D finch&eacute; il pignone entra a "
-        "pressione sull'albero, senza gioco. Non montarlo ancora sul motore.",
+        "<b>Pignone</b>: deve scorrere sull'albero del motore; lo blocca il grano M3 del "
+        "mozzo. Se riusi il pignone della V4.1, che non ha grano, lima il suo foro a D "
+        "finch&eacute; entra a pressione sull'albero. Non montarlo ancora sul motore.",
     ])
 
     step("A2", "Inserti filettati a caldo", [
@@ -477,7 +477,8 @@ def build(ui, dati):
         ["composto 42T / 14T", "gira su un 625ZZ e sulla vite M5, che fa da perno fra "
          "parete e coperchio; c1, c2 e la rondella PTFE lo tengono in posizione",
          "M5 x 90, 2 rondelle, dado autobloccante", "C5, C9"],
-        ["pignone 14T", "a pressione sull'albero del motore, foro limato a D", "-", "A1, C7"],
+        ["pignone 14T", "grano nel mozzo, stretto su uno dei due piani dell'albero del motore",
+         "1 grano M3 x 5", "C7"],
         ["coperchio del riduttore", "negli inserti dei quattro angoli", "4 M3 x 8, 4 inserti", "A2, C9"],
         ["braccio", "mozzo a morsetto sull'albero, fuori dalla scatola", "M3 x 25 e dado", "D3"],
         ["vassoio e schede", "vassoio fra il listello della parete e quello del "
@@ -596,8 +597,11 @@ def build(ui, dati):
     ], serve="l'elettronica della parte B collegata al PC, cianoacrilica")
 
     step("C7", "Pignone e ingranamento del motore", [
-        "Infila il pignone sull'albero del motore fino al collarino: i denti devono "
-        "allinearsi con quelli del 42T. Ruota il composto di un pelo per farli entrare.",
+        "Infila il pignone sull'albero del motore fino al collarino, con il mozzo verso "
+        "il coperchio: i denti devono allinearsi con quelli del 42T. Ruota il composto di "
+        "un pelo per farli entrare.",
+        "Gira il pignone finch&eacute; il grano guarda uno dei due piani dell'albero e "
+        "stringilo con la brugola da 1,5 mm.",
         "Allenta le due viti delle orecchie. I fori delle orecchie sono pi&ugrave; "
         "larghi delle viti: spingi il motore verso il composto finch&eacute; il pignone "
         "ingrana senza forzare, poi tornalo indietro di un soffio, cos&igrave; resta un "
@@ -605,7 +609,7 @@ def build(ui, dati):
         "Troppo stretto: il motore fatica e salta dei passi. Troppo lasco: i denti "
         "scavalcano sotto sforzo.",
         "<b>Da adesso il braccio non si gira pi&ugrave; a mano.</b>",
-    ], serve="il pignone 14T gi&agrave; adattato al passo A1, brugola da 2,5 mm")
+    ], serve="il pignone 14T, un grano M3 x 5, brugole da 1,5 e 2,5 mm")
 
     step("C8", "Verso di rotazione e prova a vuoto", [
         "Manda <font face='Courier'>&gt;C000</font>: il meccanismo si porta sul sensore "

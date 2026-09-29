@@ -9,7 +9,7 @@ Quantita,Componente,Dove va / nota
 8,Viti M3 x 8 testa cilindrica,4 coperchio del riduttore; 2 staffa motore (da sotto il fondo della scatola); 2 orecchie del 28BYJ-48 (si filettano da sole nella plastica)
 2,Viti M3 x 16 + rondelle + dadi,Piastra dei sensori; dall'esterno della parete sinistra
 1,Vite M3 x 25 + dado,Morsetto del mozzo del braccio
-2,Grani M3 x 5,Bandierina del magnete e ingranaggio di uscita
+3,Grani M3 x 5,Bandierina del magnete; ingranaggio di uscita; pignone del motore
 4,Viti M4 x 16 + rondelle larghe + dadi M4,Tappo sul braccio; i dadi vanno nelle sedi sotto la piastra del braccio
 4,Viti autofilettanti 1.7 x 6 (o M1.6),Arduino Nano sulle colonnine alte
 8,Viti autofilettanti M3 x 6,ULN2003 e LM2596 sulle colonnine basse

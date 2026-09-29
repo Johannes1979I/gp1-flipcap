@@ -168,7 +168,7 @@ cover_seat_x0=cover_seat_x1-bearing_w-0.2;       // 148
 
 intermediate_shaft_d=5.3;   // perno M5
 compound_bearing_od=16.2;   // 625ZZ
-motor_shaft_d=5.05;
+motor_shaft_d=5.1;          // foro scorrevole: il pignone lo tiene il grano
 ptfe_washer_t=1.0;          // rondella PTFE o nylon M5 fra distanziale e composto
 
 spacer_od=8.5;              // distanziali sull'albero da 6
@@ -488,7 +488,20 @@ module compound_gear(){
         translate([11.5,0,0]) x_cyl(compound_bearing_od/2,5.2,true);    // sede 625ZZ
     }
 }
-module motor_pinion(){ gear_x(motor_teeth,motor_shaft_d,gear_t,8.2,7); }
+// Pignone con grano M3: denti larghi 5 mm (bastano per il primo stadio), mozzo
+// lungo dal lato del coperchio. Il grano sta oltre la faccia del 42T (X 147) e
+// sopra l'ultimo tratto dell'albero, dove il 28BYJ ha i due piani. Il mozzo
+// (raggio 4,3) passa sotto la punta dei denti del 42T, che arriva a 4,8 mm.
+pinion_face=5;
+pinion_hub_d=8.6;
+pinion_len=9.5;             // da X 141 a 150,5: l'albero finisce a 149,3
+pinion_grub_x=7.5;          // centro del foro del grano, dalla faccia verso il motore
+module motor_pinion(){
+    difference(){
+        gear_x(motor_teeth,motor_shaft_d,pinion_face,pinion_hub_d,pinion_len);
+        translate([pinion_grub_x,0,0]) cylinder(d=2.7,h=10);    // grano M3, da un lato
+    }
+}
 
 // =============================================================================
 //  BANDIERINA DEL MAGNETE (sagoma della V4.1, tasca del magnete aperta verso i sensori)
