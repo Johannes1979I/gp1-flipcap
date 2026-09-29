@@ -830,6 +830,19 @@ def build(ui, dati):
       "sotto). La <b>bandierina</b> della V4.1 ha la tasca del magnete chiusa dentro il "
       "pezzo e va ristampata. Tutto il resto &egrave; nuovo e va stampato.")
     sp(2)
+    table([
+        ["Ingranaggio", "Denti", "Diametro esterno"],
+        ["uscita", "70", "57,6 mm"],
+        ["composto", "42 + 14", "35,2 mm e 12,8 mm"],
+        ["pignone del motore", "14", "12,8 mm"],
+    ], [60 * mm, 30 * mm, CW - 90 * mm])
+    callout("Gli ingranaggi della prima versione non vanno bene.",
+            "Prima della V4.1 il treno era diverso (pignoni da 12 denti, uscita pi&ugrave; "
+            "piccola) e non ingrana con queste distanze fra gli assi. Misura i tuoi: se non "
+            "corrispondono alla tabella qui sopra, ristampali dalla cartella "
+            "<font face='Courier'>stl/</font>. Non scalarli nello slicer: cambia la misura dei "
+            "denti e non ingranano pi&ugrave;.")
+    sp(2)
     callout("Attenzione all'ingranaggio di uscita delle V4.x.",
             "Nelle versioni precedenti il foro del grano cadeva sulla faccia dell'ingranaggio "
             "invece che nel mozzo, e il grano non poteva stringere l'albero. Se riusi quel "

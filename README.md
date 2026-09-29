@@ -137,6 +137,10 @@ manuale); il file della V6 ha già il foro giusto. La bandierina della V4.1 ha
 la tasca del magnete chiusa dentro il pezzo e va ristampata. Tutto il resto è
 nuovo.
 
+Gli ingranaggi della prima versione, prima della V4.1, sono diversi e non
+ingranano: l'uscita giusta ha 70 denti e 57,6 mm di diametro esterno. Se i tuoi
+non corrispondono, ristampali da `stl/` senza scalarli.
+
 ## Licenza
 
 **CERN Open Hardware Licence Version 2 – Strongly Reciprocal** (CERN-OHL-S v2).
