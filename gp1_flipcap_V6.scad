@@ -191,6 +191,25 @@ hall_a0=-25;                // la piastra copre l'arco percorso dal magnete
 hall_a1=295;
 hall_screw_r=25;
 hall_screw_a=[-18,108];     // viti; sensori a 0 (CLOSED) e 270 (OPEN)
+// Cablaggio incassato: da ogni sede parte un canale che arriva fino al bordo
+// della piastra, con accanto l'incavo del condensatore da 100 nF. Saldature,
+// condensatore e fili stanno sotto il piano della piastra, dove la bandierina
+// passa sopra senza toccarli, e i fili escono di lato dal bordo.
+// Per avere la profondita' la corona esterna (oltre il boss del cuscinetto)
+// scende verso la parete fino a hall_pad_z: la faccia dei sensori non si muove.
+// I canali sono girati di 25 gradi per stare lontani dal dado della vite a -18
+// (CLOSED) e dal perno M5 del composto (OPEN).
+hall_leg_turn=[25,-25];     // direzione del canale rispetto al raggio: CLOSED, OPEN
+hall_cap_side=[1,-1];       // lato dell'incavo del condensatore (+x o -x della sede)
+hall_chan_w=3.6;            // tratto dei piedini: tre piedini a passo 1,27
+hall_leg_depth=3.0;
+hall_wire_u0=4.5;           // dal centro del sensore: qui il canale si allarga per i fili
+hall_wire_w=6;
+hall_wire_depth=3.8;
+hall_cap_u=[3.5,10];        // incavo del condensatore: lungo il canale ...
+hall_cap_v=[1.5,8.5];       // ... e di lato, dall'asse del canale
+hall_pad_r=13.2;            // corona ingrossata: fuori dal boss del 626ZZ (12,5)
+hall_pad_z=2.2;             // quanto scende verso la parete (luce che resta)
 
 // =============================================================================
 //  STAFFA MOTORE (avvitata al fondo della scatola, da sotto)
@@ -518,20 +537,34 @@ module magnet_flag(){
 // =============================================================================
 //  PIASTRA SENSORI HALL
 //  Disegnata piatta: x -> dY, y -> dZ, z -> distanza dalla parete sinistra.
-//  Le sedi tengono gli A3144 con la faccia marcata verso il magnete.
+//  Le sedi tengono gli A3144 con la faccia marcata verso il magnete; i
+//  piedini vanno verso l'esterno nel canale (+y della sede), che prosegue
+//  fino al bordo. s = lato dell'incavo del condensatore.
 // =============================================================================
-module hall_pocket(){
-    translate([0,0,hall_seat_h-1.1]) cube([4.7,3.7,2.3],center=true);
-    translate([0,-4.2,hall_seat_h-1.1]) cube([3.2,6,2.3],center=true);
+module hall_pocket(s=1){
+    top=hall_seat_h;
+    translate([0,0,top-1.1]) cube([4.7,3.7,2.3],center=true);                          // corpo
+    translate([-hall_chan_w/2,1,top-hall_leg_depth]) cube([hall_chan_w,hall_wire_u0-0.99,hall_leg_depth+0.1]);
+    translate([-hall_wire_w/2,hall_wire_u0,top-hall_wire_depth]) cube([hall_wire_w,25,hall_wire_depth+0.1]);
+    translate([s>0?hall_cap_v[0]:-hall_cap_v[1],hall_cap_u[0],top-hall_wire_depth])  // condensatore
+        cube([hall_cap_v[1]-hall_cap_v[0],hall_cap_u[1]-hall_cap_u[0],hall_wire_depth+0.1]);
 }
+hall_names=["C","O"];       // incise vicino alle sedi: CLOSED e OPEN
 module hall_plate(){
+    sens=[0,-open_angle];
     difference(){
         union(){
             translate([0,0,hall_standoff]) linear_extrude(hall_plate_t)
                 polygon(concat(arcpts(hall_r_out,hall_a0,hall_a1,72),arcpts(hall_r_in,hall_a1,hall_a0,72)));
+            translate([0,0,hall_pad_z]) linear_extrude(hall_standoff-hall_pad_z+0.01)
+                polygon(concat(arcpts(hall_r_out,hall_a0,hall_a1,72),arcpts(hall_pad_r,hall_a1,hall_a0,72)));
             for(ac=hall_screw_a) translate([hall_screw_r*sin(ac),hall_screw_r*cos(ac),0]) cylinder(d=9,h=hall_seat_h);
         }
-        for(a=[0,-open_angle]) translate([magnet_r*sin(a),magnet_r*cos(a),0]) rotate([0,0,-a]) hall_pocket();
+        for(i=[0:1]) let(a=sens[i]){
+            translate([magnet_r*sin(a),magnet_r*cos(a),0]) rotate([0,0,-(a+hall_leg_turn[i])]) hall_pocket(hall_cap_side[i]);
+            translate([9*sin(a),9*cos(a),hall_seat_h-0.4]) rotate([0,0,-a])
+                linear_extrude(1) text(hall_names[i],size=3.5,font=logo_font,halign="center",valign="center");
+        }
         translate([0,0,-1]) cylinder(d=hall_hole_d,h=hall_seat_h+4);
         for(ac=hall_screw_a) for(i=[0:12]) let(a=ac-7+14*i/12)
             translate([hall_screw_r*sin(a),hall_screw_r*cos(a),-1]) cylinder(d=3.4,h=hall_seat_h+2);

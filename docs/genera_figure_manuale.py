@@ -63,6 +63,7 @@ def read_params():
              "nano_holes", "buck_pos", "buck_size", "buck_holes", "uln_pos", "uln_size",
              "uln_holes", "usb_hole", "jack_yz", "cable_slot", "compound_x", "hall_standoff",
              "hall_screw_a", "hall_screw_r", "magnet_r", "cav_x0", "mb_screws",
+             "hall_leg_turn", "hall_cap_side", "hall_wire_u0", "hall_cap_u", "hall_cap_v",
              "bay_bosses", "rest_pad", "cap_thickness", "cover_t"]
     with open(os.path.join(WORK, "probe.scad"), "w") as f:
         f.write("include <modello.scad>\n")
@@ -312,12 +313,33 @@ def figure_renders(Pm):
     a0, a1 = [np.radians(a) for a in Pm["hall_screw_a"]]
     r = Pm["hall_screw_r"]
     near = BOX('part_placed("housing");', C["housing"], 80, 160, hy - 42, hy + 42, hz - 42, hz + 42)
+    # sensori, condensatori e fili incassati: canale fino al bordo, incavo del condensatore a lato
     sensors = ('color([0.08,0.08,0.10]) translate([cav_x0,hinge_y,hinge_z]) rotate([90,0,90])'
-               ' for(a=[0,-open_angle]) translate([magnet_r*sin(a),magnet_r*cos(a),hall_seat_h-1.2])'
-               ' rotate([0,0,-a]) cube([4.5,3.5,2.3],center=true);')
+               ' for(i=[0:1]) let(a=[0,-open_angle][i], s=hall_cap_side[i], t=hall_seat_h)'
+               ' translate([magnet_r*sin(a),magnet_r*cos(a),0]) rotate([0,0,-(a+hall_leg_turn[i])]){'
+               ' translate([0,0,t-1.2]) cube([4.5,3.5,1.5],center=true);'
+               ' for(x=[-1.27,0,1.27]) translate([x-0.22,1.75,t-1.4]) cube([0.44,hall_wire_u0+1.5,0.4]);'
+               ' color([0.85,0.55,0.10]) translate([s*(hall_cap_v[0]+hall_cap_v[1])/2,'
+               '(hall_cap_u[0]+hall_cap_u[1])/2,t-hall_wire_depth+0.2]) cylinder(d=5,h=2.5);'
+               ' for(k=[0:2]) color([[0.8,0.1,0.1],[0.1,0.1,0.1],[0.9,0.8,0.1]][k])'
+               ' translate([(k-1)*1.6,hall_wire_u0+3,t-2.2]) rotate([-90,0,0]) cylinder(d=1.3,h=14,$fn=12); }')
+
+    def hp(i, u, v):
+        """punto (u lungo il canale, v di lato) della sede i, in coordinate globali"""
+        a = np.radians([0, -Pm["open_angle"]][i])
+        th = a + np.radians(Pm["hall_leg_turn"][i])
+        py = Pm["magnet_r"] * np.sin(a) + u * np.sin(th) + v * np.cos(th)
+        pz = Pm["magnet_r"] * np.cos(a) + u * np.cos(th) - v * np.sin(th)
+        return (xs, hy + py, hz + pz)
+
+    cu = (Pm["hall_cap_u"][0] + Pm["hall_cap_u"][1]) / 2
+    cv = (Pm["hall_cap_v"][0] + Pm["hall_cap_v"][1]) / 2
     jobs.append(("F07_piastra_sensori.png", [near, P("hall_plate"), sensors], cam, [
         ("sede CLOSED\n(verso la bocca del tubo)", (xs, hy, hz + Pm["magnet_r"]), (-260, -210), GRN),
         ("sede OPEN\n(verso il fondo)", (xs, hy - Pm["magnet_r"], hz), (-250, 230), RED),
+        ("incavo del\ncondensatore", hp(0, cu, Pm["hall_cap_side"][0] * cv), (60, -250), GRN),
+        ("canale dei fili\nfino al bordo", hp(0, 11.5, 0), (-250, -15), GRN),
+        ("incavo del\ncondensatore", hp(1, cu, Pm["hall_cap_side"][1] * cv), (220, 190), RED),
         ("asola", (xs, hy + r * np.sin(a0), hz + r * np.cos(a0)), (-230, -40)),
         ("asola", (xs, hy + r * np.sin(a1), hz + r * np.cos(a1)), (220, -110)),
     ], None))

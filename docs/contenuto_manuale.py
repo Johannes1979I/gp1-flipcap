@@ -390,15 +390,25 @@ def build(ui, dati):
         "niente da cablare. Il connettore entra in un solo verso.",
     ])
 
-    step("B6", "Preparare i sensori", [
+    step("B6", "Preparare i sensori, gia' sulla piastra", [
         "Guardando l'A3144 dal lato della <b>faccia marcata</b> (quella con le scritte), "
         "con i piedini in basso: a sinistra VCC, al centro GND, a destra l'uscita.",
-        "Salda ai piedini fili lunghi circa <b>50 cm</b>: devono arrivare dalla piastra "
-        "dei sensori, dentro il riduttore, fino al vano. Accorcia i piedini a 5 mm e "
-        "isola ogni saldatura con la guaina.",
-        "Salda un condensatore da 100 nF fra VCC e GND di ogni sensore, il pi&ugrave; "
-        "vicino possibile al corpo.",
-        "Unisci i due VCC e i due GND vicino alla piastra: al vano arrivano quattro fili, "
+        "I sensori si cablano <b>sulla piastra</b>, a banco, prima di montarla. Infila "
+        "ogni A3144 nella sua sede con la faccia marcata verso l'alto: la sede vicino "
+        "alla lettera incisa <b>C</b> &egrave; CLOSED, quella vicino alla <b>O</b> "
+        "&egrave; OPEN. I piedini si stendono nel tratto stretto del canale.",
+        "Tutto il cablaggio sta <b>dentro la piastra</b>, sotto il piano su cui passa la "
+        "bandierina: il canale si allarga a 6 mm, profondo 3,8, e arriva fino al bordo; "
+        "accanto alla sede c'&egrave; l'incavo del condensatore. Niente deve sporgere "
+        "dal piano.",
+        "Accorcia i piedini in modo che entrino di 2-3 mm nel tratto largo. Metti il "
+        "condensatore da 100 nF sdraiato nel suo incavo e salda le sue gambe su VCC e GND.",
+        "Salda ai piedini fili lunghi circa <b>50 cm</b> (devono arrivare fino al vano), "
+        "con le tre saldature sfalsate di qualche millimetro e ognuna nella sua guaina. "
+        "I fili corrono nel canale ed escono di lato dal bordo della piastra.",
+        "Riempi canale e incavo con colla a caldo, rasa al piano: isola le saldature e fa "
+        "da fermacavo. Prima che indurisca controlla che non sporga niente.",
+        "Unisci i due VCC e i due GND fuori dalla piastra: al vano arrivano quattro fili, "
         "<b>VCC, GND, CLOSED, OPEN</b>. Segna con un pezzo di nastro quale sensore "
         "&egrave; quale.",
         "Uscita CLOSED -&gt; <b>D10</b>, uscita OPEN -&gt; <b>D11</b>. Non servono "
@@ -503,9 +513,10 @@ def build(ui, dati):
     ], serve="2 cuscinetti 626ZZ, la scatola, il coperchio del riduttore")
 
     step("C2", "Piastra dei sensori - va montata prima dell'albero", [
-        "Infila i due A3144 nelle loro sedi con la <b>faccia marcata verso l'alto</b>, "
-        "cio&egrave; verso l'interno della scatola, dove passer&agrave; il magnete. I "
-        "fili escono dalla fessura verso il centro e girano sotto la piastra.",
+        "I due A3144 sono gi&agrave; nelle loro sedi e cablati (passo B6), con la "
+        "<b>faccia marcata verso l'interno della scatola</b>, dove passer&agrave; il "
+        "magnete. I fili escono dal canale sul bordo della piastra: niente fili sopra il "
+        "piano, sotto la piastra o vicino al foro centrale.",
         "La sede rivolta verso il <b>bordo anteriore</b> della scatola (lato tappo) "
         "&egrave; quella del sensore <b>CLOSED</b>; la sede rivolta verso il "
         "<b>fondo</b> della scatola (lato tubo) &egrave; quella del sensore "

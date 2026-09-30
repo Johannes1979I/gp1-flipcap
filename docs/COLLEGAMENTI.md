@@ -37,6 +37,12 @@ Visti dal lato della faccia marcata, piedini in basso: VCC, GND, uscita.
 - D11 <- uscita del sensore **OPEN** (sede rivolta verso il fondo della scatola, lato tubo)
 - VCC -> +5 V, GND -> GND, 100 nF fra VCC e GND vicino a ogni sensore
 
+I sensori si cablano gia' montati nella piastra (sedi marcate C e O). Tutto
+resta incassato sotto il piano su cui passa la bandierina: accanto a ogni sede
+c'e' l'incavo del condensatore da 100 nF, e il canale porta piedini, saldature
+e fili fino al bordo, da cui i fili escono di lato. Canale e incavo si
+riempiono di colla a caldo, rasa al piano.
+
 I due VCC e i due GND si uniscono vicino alla piastra: al vano arrivano
 quattro fili (VCC, GND, CLOSED, OPEN) attraverso il passaggio fra riduttore e
 vano. Il firmware usa le resistenze di pull-up interne del Nano: il sensore
