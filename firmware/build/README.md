@@ -6,8 +6,8 @@
 ```
 arduino-cli 1.3.1 - core arduino:avr 1.8.6 - avr-gcc 7.3.0-atmel3.6.1-arduino7
 fqbn: arduino:avr:nano:cpu=atmega328
-flash: 4384 byte su 30720 (14%)
-RAM:    304 byte su  2048 (14%)
+flash: 5016 byte su 30720 (16%)
+RAM:    314 byte su  2048 (15%)
 0 errori, 0 warning nello sketch
 ```
 
@@ -36,3 +36,9 @@ resta indietro rispetto al sorgente:
 ```
 arduino-cli compile --fqbn arduino:avr:nano --output-dir firmware/build firmware/GP1_FlipCap_V6
 ```
+
+Modalita' attuale (15/10/2026): `STEPS_ONLY = true`, i sensori sono ignorati
+perche' la loro alimentazione e' instabile. Apertura = `OPEN_STEPS` (23755) passi
+dalla posizione chiusa, chiusura = ritorno a zero; posizione e passi di apertura
+salvati in EEPROM. `>Exxxxx` cambia e salva i passi, `>Z` dichiara chiusa la
+posizione attuale. Riparati i sensori, rimettere `STEPS_ONLY = false`.

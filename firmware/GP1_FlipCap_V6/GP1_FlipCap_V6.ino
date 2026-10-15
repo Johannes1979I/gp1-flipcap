@@ -36,6 +36,7 @@
 */
 
 #include <Arduino.h>
+#include <EEPROM.h>
 
 static const uint32_t BAUD_RATE = 9600;
 static const uint8_t MOTOR_PINS[4] = {2, 3, 4, 5};   // D2..D5 -> IN1..IN4
@@ -47,6 +48,19 @@ static const uint8_t PHASE_ORDER = 2;   // provato sul prototipo il 02/10/2026
 static uint8_t phaseOrder = PHASE_ORDER;
 static const uint8_t HALL_CLOSED_PIN = 6;
 static const uint8_t HALL_OPEN_PIN   = 7;
+
+// Sensore OPEN: false = apertura a passi fissi contati dalla posizione chiusa
+// (15/10/2026: il sensore OPEN del prototipo legge sempre "attivo"). La chiusura
+// usa sempre il sensore CLOSED. Rimettere true quando il sensore OPEN e' riparato.
+static const bool USE_OPEN_SENSOR = false;
+// STEPS_ONLY = true: ignora ENTRAMBI i sensori (15/10/2026: alimentazione dei
+// sensori instabile, leggono "attivo" anche senza magnete). Apertura = OPEN_STEPS
+// dalla posizione chiusa, chiusura = ritorno a zero; posizione in EEPROM.
+// Alla prima accensione con questo firmware la posizione attuale vale "chiuso".
+static const bool STEPS_ONLY = true;
+// Passi dalla posizione chiusa a quella aperta (tappo sugli appoggi). 23330 =
+// dove si fermava con il sensore e i +7 gradi del 15/10. Si regola con >Exxxxx.
+static const uint32_t OPEN_STEPS = 23755;   // 15/10/2026: +5 gradi (425 passi) sul tappo montato
 
 // Mettere a true se dopo il montaggio OPEN/CLOSE risultano invertiti.
 static const bool MOTOR_REVERSED = false;
@@ -103,6 +117,23 @@ static const uint32_t OVERRUN_OPEN_STEPS  = 2844;
 static const uint32_t OVERRUN_CLOSE_STEPS = 1400;
 static uint32_t runOverrunOpen  = OVERRUN_OPEN_STEPS;
 static uint32_t runOverrunClose = OVERRUN_CLOSE_STEPS;
+
+// Posizione in passi dalla posizione chiusa, ricordata in EEPROM: il Nano si
+// resetta ogni volta che Ekos apre la porta e senza memoria non saprebbe piu'
+// se il tappo e' aperto (aprirebbe di nuovo, spingendo sugli appoggi).
+static uint32_t runOpenSteps = OPEN_STEPS;
+static long pos = 0;
+static bool posKnown = false;
+static long openTarget = 0;
+static long stepTarget = 0;
+static const uint8_t EE_MAGIC = 0xA7;   // cambiato: azzera la posizione al primo avvio
+static void saveState(uint8_t state)
+{
+  EEPROM.update(0, EE_MAGIC);
+  EEPROM.update(1, state);
+  EEPROM.put(2, pos);
+  EEPROM.put(6, runOpenSteps);
+}
 static uint32_t overrunLeft = 0;
 static uint8_t  overrunTarget = 0;                 // stato finale: 1 chiuso, 2 aperto
 static uint8_t phase = 0;
@@ -167,10 +198,29 @@ void determineInitialState()
 {
   uint32_t t0 = millis();
   while (millis() - t0 < 30) sampleHall();      // riempie il filtro
-  bool c = closedActive(), o = openActive();
-  if (c && !o) coverStatus = 1;
-  else if (o && !c) coverStatus = 2;
-  else coverStatus = 0;
+  bool c = closedActive(), o = USE_OPEN_SENSOR ? openActive() : false;
+  if (STEPS_ONLY) {
+    if (EEPROM.read(0) == EE_MAGIC) {
+      coverStatus = EEPROM.read(1); EEPROM.get(2, pos);
+      uint32_t st; EEPROM.get(6, st);
+      if (st >= 1000 && st <= 40000) runOpenSteps = st;
+    } else {
+      pos = 0; coverStatus = 1; saveState(1);          // primo avvio: e' chiuso
+    }
+    posKnown = true;
+    return;
+  }
+  if (USE_OPEN_SENSOR) {
+    if (c && !o) coverStatus = 1;
+    else if (o && !c) coverStatus = 2;
+    else coverStatus = 0;
+  } else if (c) {
+    coverStatus = 1; pos = 0; posKnown = true;
+  } else if (EEPROM.read(0) == EE_MAGIC && EEPROM.read(1) == 2) {
+    coverStatus = 2; EEPROM.get(2, pos); posKnown = true;   // era aperto
+  } else {
+    coverStatus = 0; posKnown = false;
+  }
 }
 
 void stopMotion(uint8_t state)
@@ -181,6 +231,10 @@ void stopMotion(uint8_t state)
   moveDirection = 0;
   coverStatus = state;
   motorOff();
+  if (state == 1) { pos = 0; posKnown = true; }
+  else if (state == 2 && !USE_OPEN_SENSOR) { if (!posKnown) pos = runOpenSteps; posKnown = true; }
+  else if (state == 3) posKnown = false;
+  saveState(state);
 }
 
 void startMotion(int8_t direction)
@@ -192,8 +246,28 @@ void startMotion(int8_t direction)
   // contatori di corsa e con loro il limite di extracorsa.
   if (moving && moveDirection == d) return;
 
-  if (direction > 0 && openActive())   { stopMotion(2); return; }
+  if (STEPS_ONLY) {
+    stepTarget = (d > 0) ? (long)runOpenSteps : 0;
+    if (pos == stepTarget) { stopMotion(d > 0 ? 2 : 1); return; }
+    moving = true;
+    moveDirection = (stepTarget > pos) ? 1 : -1;
+    coverStatus = 0;
+    moveStartMs = millis();
+    moveSteps = 0;
+    overrunTarget = 0;
+    overrunLeft = 0;
+    stepInterval = START_INTERVAL_US;
+    lastStepUs = micros();
+    return;
+  }
+
+  if (direction > 0 && USE_OPEN_SENSOR && openActive()) { stopMotion(2); return; }
   if (direction < 0 && closedActive()) { stopMotion(1); return; }
+  if (direction > 0 && !USE_OPEN_SENSOR) {
+    if (!posKnown && closedActive()) { pos = 0; posKnown = true; }
+    openTarget = posKnown ? (long)runOpenSteps - pos : (long)runOpenSteps;
+    if (openTarget <= 0) { stopMotion(2); return; }
+  }
 
   moving = true;
   moveDirection = d;
@@ -210,7 +284,11 @@ void serviceMotion()
 {
   if (!moving) return;
 
-  if (overrunTarget == 0) {
+  if (STEPS_ONLY) {
+    if (pos == stepTarget) { stopMotion(stepTarget == 0 ? 1 : 2); return; }
+  } else if (!USE_OPEN_SENSOR && moveDirection > 0) {
+    if ((long)moveSteps >= openTarget) { stopMotion(2); return; }   // apertura a passi fissi
+  } else if (overrunTarget == 0) {
     uint8_t hit = 0;
     if (moveDirection > 0 && openActive())   hit = 2;
     if (moveDirection < 0 && closedActive()) hit = 1;
@@ -226,7 +304,7 @@ void serviceMotion()
   }
 
   if ((millis() - moveStartMs) >= MOVE_TIMEOUT_MS + 5000UL ||
-      moveSteps >= MAX_MOVE_STEPS + runOverrunOpen + runOverrunClose) {
+      moveSteps >= MAX_MOVE_STEPS + runOverrunOpen + runOverrunClose + runOpenSteps) {
     stopMotion(3);
     return;
   }
@@ -241,6 +319,7 @@ void serviceMotion()
   setMotorPhase(phase);
 
   ++moveSteps;
+  pos += moveDirection;
   if (overrunLeft) --overrunLeft;
   stepInterval = rampInterval(moveSteps);
 }
@@ -293,7 +372,8 @@ void handleCommand(const char *cmd)
     //   >N      passi fatti dall'ultima corsa      -> *N<passi>
     //   >Txxxx  intervallo a regime in us, fino al prossimo reset -> *T<us>
 //   >Kn     ordine delle fasi 0..2, fino al prossimo reset     -> *K<n>
-//   >Exxxx  oltre-corsa in apertura, fino al reset  -> *E<passi>  (>E? lo legge)
+//   >Z      (STEPS_ONLY) la posizione attuale diventa "chiuso", salvata -> *Z0
+//   >Exxxx  oltre-corsa in apertura (senza sensore OPEN: passi di apertura), fino al reset -> *E<passi>
 //   >Fxxxx  oltre-corsa in chiusura, fino al reset  -> *F<passi>  (>F? lo legge)
     case 'N': Serial.print("*N"); Serial.print(moveSteps); Serial.print('\n'); break;
     case 'T': {
@@ -304,12 +384,20 @@ void handleCommand(const char *cmd)
     }
     case 'E':
     case 'F': {
-      uint32_t *ov = (cmd[1] == 'E') ? &runOverrunOpen : &runOverrunClose;
+      // senza sensore OPEN, >E regola i passi di apertura dalla posizione chiusa
+      uint32_t *ov = (cmd[1] == 'E') ? (USE_OPEN_SENSOR ? &runOverrunOpen : &runOpenSteps) : &runOverrunClose;
       long n = atol(cmd + 2);
-      if (!moving && n >= 0 && n <= 5000 && cmd[2] >= '0' && cmd[2] <= '9') *ov = (uint32_t)n;
+      if (!moving && n >= 0 && n <= 40000 && cmd[2] >= '0' && cmd[2] <= '9') {
+        *ov = (uint32_t)n;
+        if (STEPS_ONLY && cmd[1] == 'E') saveState(coverStatus);   // passi di apertura salvati
+      }
       Serial.print('*'); Serial.print(cmd[1]); Serial.print(*ov); Serial.print('\n');
       break;
     }
+    case 'Z':                                   // >Z: la posizione attuale e' "chiuso"
+      if (!moving) { pos = 0; posKnown = true; coverStatus = 1; saveState(1); }
+      Serial.print("*Z"); Serial.print(pos); Serial.print('\n');
+      break;
     case 'K': {
       int k = cmd[2] - '0';
       if (!moving && k >= 0 && k <= 2) phaseOrder = (uint8_t)k;
