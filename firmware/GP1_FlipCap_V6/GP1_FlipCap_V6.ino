@@ -97,8 +97,9 @@ static uint32_t runInterval = STEP_INTERVAL_US;   // regime, modificabile con >T
 // passi, cosi' il tappo arriva davvero in chiusura e sugli appoggi.
 // 1 grado = 30570 / 360 = ~85 passi. Separati per verso: tarati sul tappo
 // montato il 14/10/2026 (in apertura il tappo restava alto: +10 gradi).
+// 15/10/2026: in apertura altri 7 gradi (594 passi), il tappo non si apriva del tutto.
 // Si regolano al volo con >Exxxx (apertura) e >Fxxxx (chiusura).
-static const uint32_t OVERRUN_OPEN_STEPS  = 2250;
+static const uint32_t OVERRUN_OPEN_STEPS  = 2844;
 static const uint32_t OVERRUN_CLOSE_STEPS = 1400;
 static uint32_t runOverrunOpen  = OVERRUN_OPEN_STEPS;
 static uint32_t runOverrunClose = OVERRUN_CLOSE_STEPS;
