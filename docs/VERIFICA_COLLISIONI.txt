@@ -3,6 +3,11 @@ GP1 FlipCap V6 - VERIFICA GEOMETRICA AUTOMATICA
 cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
 
 1) PEZZI DA STAMPARE (stl/): ogni file deve essere un solido unico
+   OK angolare_A-ALTO    corpi=1    33.4 x   28.7 x   10.9 mm     2.7 cm3  base Z=-0.00
+   OK angolare_A-BASSO   corpi=1    33.4 x   54.2 x   10.9 mm     3.7 cm3  base Z=-0.00
+   OK angolare_P-ALTO    corpi=1    33.4 x   28.7 x   11.9 mm     2.7 cm3  base Z=0.00
+   OK angolare_P-BASSO   corpi=1    33.4 x   54.2 x   11.9 mm     3.8 cm3  base Z=0.00
+   OK angolari_scatola_tutti corpi=4    93.4 x  120.6 x   11.9 mm    12.9 cm3  base Z=-0.00
    OK bay_lid            corpi=1   104.0 x   56.0 x    6.0 mm    17.1 cm3  base Z=0.00
    OK bay_tray           corpi=1    68.0 x   97.0 x   13.0 mm    21.4 cm3  base Z=0.00
    OK cap_backplate      corpi=1    83.5 x   53.0 x    3.0 mm     9.2 cm3  base Z=0.00
@@ -20,7 +25,7 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    OK test_pin           corpi=2    85.2 x   23.5 x    6.3 mm     1.9 cm3  base Z=0.00
    OK test_shaft         corpi=1   100.0 x    5.9 x    5.3 mm     2.6 cm3  base Z=0.00
    -> tutti i pezzi sono solidi unici
-   -> materiale totale (appoggi x2): 608 cm3
+   -> materiale totale (appoggi x2): 634 cm3
 
 2) PEZZI FERMI MONTATI: compenetrazioni e luci
    housing        <-> cover          appoggio di faccia
@@ -52,11 +57,11 @@ cerniera Y=264.0 Z=-25.0  braccio X=68.0  tappo D=374 sp.3.0  tubo D=362
    -> nessuna compenetrazione
 
 3) CORSA COMPLETA 0 -> -270 gradi
-      luce minima bandierina - piastra sensori        2.50 mm  (a -87 gradi)
+      luce minima bandierina - piastra sensori        2.50 mm  (a -174 gradi)
       luce minima braccio - appoggi                  43.90 mm  (a -264 gradi)
       luce minima braccio - bay_lid                  82.26 mm  (a -270 gradi)
       luce minima braccio - cover                    72.00 mm  (a 0 gradi)
-      luce minima braccio - housing                   8.00 mm  (a -48 gradi)
+      luce minima braccio - housing                   8.00 mm  (a -111 gradi)
       luce minima braccio - motor_bracket            56.31 mm  (a -261 gradi)
       luce minima braccio - tubo                     36.50 mm  (a -270 gradi)
       luce minima tappo - appoggi                    10.83 mm  (a -267 gradi)

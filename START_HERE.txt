@@ -20,6 +20,8 @@ ALTRI FILE
                          test_shaft e test_pin: assi di prova in plastica
                          (facoltativi), per provare prima dell'acciaio
   firmware/              sketch Arduino + .hex precompilato
+  tools/stk500.py        carica il .hex sul Nano senza avrdude
+  accessori/             angolari di fermo della scatola (STL in stl/)
   docs/                  distinte, schema dei collegamenti, verifica geometrica,
                          assieme per SketchUp
 

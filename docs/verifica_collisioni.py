@@ -348,7 +348,8 @@ def main():
         # gli assi di prova sono facoltativi: non entrano nel totale
         total += 0 if f.startswith("test_") else vol * (2 if f.startswith("cap_rest") else 1)
         # i distanziali sono cinque tubetti separati per scelta; il perno di prova ha la sua ghiera
-        expected = 5 if f.startswith("spacers") else (2 if f.startswith("test_pin") else 1)
+        expected = 5 if f.startswith("spacers") else (2 if f.startswith("test_pin") else
+                                                     (4 if f.startswith("angolari_scatola_tutti") else 1))
         good = n_isl == expected
         ok_all &= good
         say("   %s %-18s corpi=%d  %6.1f x %6.1f x %6.1f mm  %6.1f cm3  base Z=%.2f"

@@ -73,10 +73,13 @@ gp1_flipcap_V6.scad            modello parametrico: tutti i pezzi e l'assieme
 LICENSE / NOTICE               CERN-OHL-S v2
 stl/                           i 14 pezzi da stampare, già orientati, più
                                test_shaft e test_pin: assi di prova in
-                               plastica, per provare prima dell'acciaio
+                               plastica, per provare prima dell'acciaio, e
+                               i 4 angolari di fermo della scatola (angolare_*)
+accessori/angolari_scatola.scad  sorgente degli angolari di fermo (facoltativi)
 firmware/
   GP1_FlipCap_V6/              sketch Arduino
   build/                       .hex precompilato per Nano + istruzioni avrdude
+tools/stk500.py                carica il .hex sul Nano senza avrdude (Python 3)
 docs/
   BOM_meccanica.csv  BOM_elettronica.csv  COLLEGAMENTI.md
   verifica_collisioni.py       verifica geometrica automatica
@@ -104,14 +107,18 @@ su ogni PC.
 ## Firmware
 
 Sketch per Arduino Nano che emula il protocollo Alnitak: full-step a due fasi
-con rampa di accelerazione, antirimbalzo sui sensori, limite di passi e di
-tempo se un sensore non scatta, bobine spente a motore fermo. Il driver INDI
-ripete il comando dopo 30 secondi: il firmware riconosce la ripetizione e la
-ignora, e la corsa da 55 secondi finisce regolarmente.
+con rampa di accelerazione, filtro di 20 ms sui sensori (D6 CLOSED, D7 OPEN),
+oltre-corsa separato in apertura e chiusura dopo lo scatto del sensore, limite
+di passi e di tempo se un sensore non scatta, bobine spente a motore fermo.
+Risponde con un solo LF, come l'Alnitak vero: il driver INDI legge 8 byte
+esatti. Il driver ripete il comando dopo 30 secondi: il firmware riconosce la
+ripetizione e la ignora, e la corsa da circa 45 secondi finisce regolarmente.
+Comandi di diagnostica fuori protocollo: `>N` passi dell'ultima corsa, `>T`
+velocità, `>K` ordine delle fasi, `>E`/`>F` oltre-corsa (validi fino al reset).
 
 ```
-arduino-cli 1.3.1 - core arduino:avr 1.8.6 - fqbn arduino:avr:nano
-flash 3612/30720 byte (11%) - RAM 261/2048 byte (12%) - 0 errori, 0 warning
+arduino-cli 1.3.1 - core arduino:avr 1.8.6 - fqbn arduino:avr:nano:cpu=atmega328
+flash 4384/30720 byte (14%) - RAM 304/2048 byte (14%) - 0 errori
 ```
 
 ## Verifica geometrica

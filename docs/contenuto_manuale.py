@@ -93,7 +93,7 @@ def build(ui, dati):
         ["Motore", "28BYJ-48 da 5 V con scheda driver ULN2003"],
         ["Riduzione", "riduttore interno del 28BYJ + treno stampato 15:1 "
                       "(modulo 0,8: 14T-&gt;42T, 14T-&gt;70T)"],
-        ["Corsa", "270 gradi in circa 55 secondi"],
+        ["Corsa", "270 gradi in circa 45 secondi"],
         ["Albero di uscita", "acciaio 6 x 100 mm su due cuscinetti 626ZZ"],
         ["Finecorsa", "2 sensori Hall A3144 su una piastra, magnete 6 x 3 mm su una "
                       "bandierina solidale all'albero"],
@@ -411,8 +411,10 @@ def build(ui, dati):
         "Unisci i due VCC e i due GND fuori dalla piastra: al vano arrivano quattro fili, "
         "<b>VCC, GND, CLOSED, OPEN</b>. Segna con un pezzo di nastro quale sensore "
         "&egrave; quale.",
-        "Uscita CLOSED -&gt; <b>D10</b>, uscita OPEN -&gt; <b>D11</b>. Non servono "
+        "Uscita CLOSED -&gt; <b>D6</b>, uscita OPEN -&gt; <b>D7</b>. Non servono "
         "resistenze: il firmware usa quelle interne del Nano.",
+        "VCC dei sensori sul <b>+5 V</b> del convertitore, mai sui 12 V: un ponte di "
+        "stagno nel canale stretto porterebbe 12 V su un pin del Nano e lo brucerebbe.",
     ])
 
     step("B7", "Caricare il firmware", [
@@ -423,6 +425,9 @@ def build(ui, dati):
         "tutti i cloni.",
         "In alternativa carica il file gi&agrave; compilato "
         "<font face='Courier'>firmware/build/GP1_FlipCap_V6.ino.hex</font> con avrdude "
+        "oppure, dove avrdude non c'&egrave; (per esempio sul Raspberry), con "
+        "<font face='Courier'>python3 tools/stk500.py /dev/ttyUSB0 "
+        "GP1_FlipCap_V6.ino.hex</font>, che scrive e verifica pagina per pagina "
         "(istruzioni nel README della cartella).",
         "Non cambiare niente al primo caricamento.",
     ])
@@ -629,9 +634,22 @@ def build(ui, dati):
         "sensore OPEN. Se va nel verso sbagliato, fermala con "
         "<font face='Courier'>&gt;C000</font>, metti <font face='Courier'>MOTOR_REVERSED = "
         "true</font> nel firmware e ricaricalo.",
-        "La corsa completa deve durare <b>circa 55 secondi</b> e finire con lo stato 2. "
+        "La corsa completa deve durare <b>circa 45 secondi</b> e finire con lo stato 2. "
         "Molto di pi&ugrave;, o uno stato 3, significa passi persi o sensore non "
         "raggiunto.",
+        "Se il motore <b>vibra</b>, gira lento o <b>cambia verso cambiando velocit&agrave;</b>, "
+        "l'ordine delle fasi IN1-IN4 &egrave; sbagliato. Invece di spostare i fili prova "
+        "<font face='Courier'>&gt;K0</font>, <font face='Courier'>&gt;K1</font>, "
+        "<font face='Courier'>&gt;K2</font> seguiti da un breve "
+        "<font face='Courier'>&gt;O000</font>: quello che gira liscio va scritto in "
+        "<font face='Courier'>PHASE_ORDER</font> nel firmware.",
+        "I sensori scattano qualche grado prima che il magnete sia sopra di loro: dopo "
+        "lo scatto il motore fa ancora un <b>oltre-corsa</b> (circa 85 passi per grado). "
+        "Si regola al volo con <font face='Courier'>&gt;E</font> in apertura e "
+        "<font face='Courier'>&gt;F</font> in chiusura (es. "
+        "<font face='Courier'>&gt;E2250</font>), poi si scrive in "
+        "<font face='Courier'>OVERRUN_OPEN_STEPS</font> e "
+        "<font face='Courier'>OVERRUN_CLOSE_STEPS</font>.",
     ])
 
     step("C9", "Chiudere il riduttore", [
@@ -734,23 +752,57 @@ def build(ui, dati):
            "FIG. D4 - tappo parcheggiato, appoggiato sul tubo")
 
     step("D7", "Ekos / INDI", [
-        "Driver <b>Flip Flat</b> (<font face='Courier'>indi_flipflat</font>), porta "
-        "seriale del Nano, 9600 baud.",
+        "Nell'editor dei profili aggiungi il driver <b>Flip Flat</b> "
+        "(<font face='Courier'>indi_flipflat</font>, in Auxiliary, a volte sotto Optec). "
+        "Porta seriale del Nano, 9600 baud, <b>ricerca automatica delle porte "
+        "disattivata</b>.",
+        "Il Nano ha lo stesso chip USB (CH340, senza numero di serie) di molti "
+        "focheggiatori e ruote portafiltri: su Linux dagli un nome fisso legato alla "
+        "presa USB con una regola udev, per esempio <font face='Courier'>SUBSYSTEM==\"tty\", "
+        "KERNELS==\"1-1.3\", ATTRS{idVendor}==\"1a86\", SYMLINK+=\"flipcap\"</font>, e usa "
+        "<font face='Courier'>/dev/flipcap</font>. Niente <font face='Courier'>RUN+=stty</font> "
+        "nella regola: aprire la porta resetta il Nano.",
         "<b>Park</b> = chiudi, <b>Unpark</b> = apri.",
-        "La corsa dura circa 55 secondi, pi&ugrave; dei 30 dopo i quali il driver INDI "
+        "Nei <b>Treni ottici</b> di Ekos assegna Flip Flat alla voce <b>Dust cap</b> del "
+        "treno del telescopio: la scheda Cattura apre il tappo prima dei Light e lo "
+        "chiude prima di Dark e Bias.",
+        "La corsa dura circa 45 secondi, pi&ugrave; dei 30 dopo i quali il driver INDI "
         "ripete il comando e scrive nel log <i>Parking cap timed out. Retrying</i>. "
         "&Egrave; normale: il firmware riconosce il comando ripetuto e lo ignora, e la "
         "corsa finisce regolarmente.",
+        "Fra un Park e un Unpark aspetta circa un minuto: il driver lascia attivo il "
+        "timer del comando precedente e, se scade durante la corsa opposta, la inverte "
+        "per qualche secondo.",
         "Usa il tappo a telescopio fermo: aprilo prima di sparcheggiare e chiudilo dopo "
         "aver parcheggiato.",
     ])
+
+    step("D8", "Angolari di fermo (facoltativi)", [
+        "Con il freddo della notte le cinghie a strappo si allentano e la scatola pu&ograve; "
+        "muoversi sul tubo. Quattro angolari bassi, incollati al tubo con colla a caldo, "
+        "la tengono ferma lungo il tubo e attorno al tubo.",
+        "Stampa <font face='Courier'>stl/angolare_A-ALTO.stl</font>, "
+        "<font face='Courier'>A-BASSO</font>, <font face='Courier'>P-ALTO</font> e "
+        "<font face='Courier'>P-BASSO</font> (o tutti insieme in "
+        "<font face='Courier'>angolari_scatola_tutti.stl</font>): la faccia con la sigla "
+        "va sul piatto, niente supporti. Sorgente: "
+        "<font face='Courier'>accessori/angolari_scatola.scad</font>.",
+        "A = sella anteriore (verso la bocca), P = sella posteriore; ALTO = fianco verso "
+        "la cima del tubo, BASSO = fianco verso il basso. La sigla guarda verso "
+        "l'esterno.",
+        "Con la scatola montata e le cinghie strette, appoggia ogni angolare allo "
+        "spigolo della sella (testata e fianco), poi incollalo al tubo: lascia libere "
+        "le zone dove passano le cinghie.",
+    ], serve="4 angolari stampati, colla a caldo")
 
     # =========================================================== APPENDICI
     story.append(PageBreak())
     banner("Appendici")
 
     h2("A. &nbsp;Comandi seriali (protocollo Alnitak)")
-    p("9600 baud, 8N1, ogni comando termina con un a capo (LF). Il firmware emula "
+    p("9600 baud, 8N1, comandi e risposte terminano con un solo a capo (LF): il "
+      "driver INDI legge esattamente 8 byte, e un CR in pi&ugrave; gli fa fallire il ping "
+      "(<i>Device ping failed / Unable to parse input</i>). Il firmware emula "
       "l'Alnitak Remote Dust Cover, product ID 98.")
     sp(3)
     table([
@@ -762,6 +814,10 @@ def build(ui, dati):
         ["&gt;V000", "*V98160", "versione del firmware"],
         ["&gt;J000", "*J98000", "luminosit&agrave; (non usata)"],
         ["&gt;B, &gt;L, &gt;D", "*B98000 ...", "comandi del pannello luminoso: rispondono ma non fanno niente"],
+        ["&gt;N", "*N&lt;passi&gt;", "diagnostica: passi fatti dall'ultima corsa"],
+        ["&gt;Txxxx", "*T&lt;us&gt;", "diagnostica: microsecondi per passo, fino al reset"],
+        ["&gt;Kn", "*K&lt;n&gt;", "diagnostica: ordine delle fasi 0-2, fino al reset"],
+        ["&gt;Exxxx / &gt;Fxxxx", "*E / *F", "oltre-corsa in apertura / chiusura, fino al reset (? lo legge)"],
     ], [26 * mm, 30 * mm, CW - 56 * mm])
 
     h2("B. &nbsp;Coppia, velocit&agrave; e peso del tappo")
@@ -776,9 +832,10 @@ def build(ui, dati):
     sp(3)
     p("<b>Se il tappo non si alza</b> e hai gi&agrave; il materiale pi&ugrave; leggero, "
       "rallenta il motore: il 28BYJ ha pi&ugrave; coppia a bassa velocit&agrave;. Nel "
-      "firmware porta <font face='Courier'>STEP_INTERVAL_US</font> da 2400 a 3000 e "
-      "<font face='Courier'>MOVE_TIMEOUT_MS</font> da 70000 a 90000 (la corsa passa a "
-      "circa 70 secondi). Se non basta ancora serve un motore pi&ugrave; forte.")
+      "firmware porta <font face='Courier'>STEP_INTERVAL_US</font> da 2000 a 2400 o "
+      "3000 (corsa di 55 o 70 secondi; il timeout si ricalcola da solo). Si prova al "
+      "volo con <font face='Courier'>&gt;T2400</font>. Se non basta ancora serve un "
+      "motore pi&ugrave; forte.")
 
     h2("C. &nbsp;Diagnostica")
     table([
@@ -798,7 +855,15 @@ def build(ui, dati):
         ["Il Nano si resetta quando parte il motore", "motore alimentato dal Nano",
          "il motore va sul +5 V del convertitore (B4)"],
         ["La scatola ruota attorno al tubo", "cinghie lente o EVA mancante",
-         "stringi le cinghie; l'EVA sotto le selle &egrave; necessaria"],
+         "stringi le cinghie; l'EVA sotto le selle &egrave; necessaria; angolari di fermo (D8)"],
+        ["Il motore vibra o cambia verso con la velocit&agrave;", "ordine delle fasi",
+         "prova &gt;K0, &gt;K1, &gt;K2 (passo C8)"],
+        ["Si ferma prima della chiusura o degli appoggi", "il sensore scatta in anticipo",
+         "aumenta l'oltre-corsa con &gt;E / &gt;F (passo C8)"],
+        ["Ekos: Device ping failed", "risposte con CR+LF o porta sbagliata",
+         "firmware aggiornato; porta fissa /dev/flipcap; nessun altro driver sulla porta"],
+        ["La USB si stacca durante la corsa", "disturbi del motore",
+         "100 nF sul + e - della ULN2003, alimentatore 12 V serio, cavo USB lontano dal motore"],
     ], [42 * mm, 42 * mm, CW - 84 * mm])
 
     h2("D. &nbsp;Limiti verificati")
@@ -812,7 +877,8 @@ def build(ui, dati):
             "Se il sensore OPEN non scatta, oltre i 270 gradi il tappo &egrave; gi&agrave; "
             "sugli appoggi: il motore si ferma contro di loro, cosa che il 28BYJ "
             "sopporta, e il firmware lo spegne al pi&ugrave; tardi dopo "
-            "MAX_MOVE_STEPS = 24.100 passi (circa 284 gradi) o 70 secondi, segnalando "
+            "MAX_MOVE_STEPS = 24.074 passi pi&ugrave; l'oltre-corsa (circa 285 gradi) "
+            "o circa 72 secondi, segnalando "
             "lo stato 3. In chiusura, oltre lo zero il tappo va in appoggio sull'anello "
             "del tubo.", kind="info")
 

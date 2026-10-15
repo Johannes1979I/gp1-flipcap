@@ -862,12 +862,12 @@ def fig_cablaggio():
     seg([(80, 34), (92, 34)], GRN, 2.2)
     ax.text(86, 35.2, "connettore\nbianco 5 poli", ha="center", va="bottom", fontsize=8.4, color=GRN)
     seg([(29, 26), (29, 18)], BLU, 1.7)
-    ax.text(29.9, 23.4, "D10 <- CLOSED", fontsize=8.6, color=BLU)
+    ax.text(29.9, 23.4, "D6 <- CLOSED", fontsize=8.6, color=BLU)
     seg([(37, 26), (37, 20.8), (46, 20.8), (46, 18)], BLU, 1.7)
-    ax.text(37.9, 19.4, "D11 <- OPEN", fontsize=8.6, color=BLU)
+    ax.text(37.9, 19.4, "D7 <- OPEN", fontsize=8.6, color=BLU)
     ax.text(88, 11, "Il firmware usa le resistenze di pull-up\ninterne del Nano: il sensore porta il\n"
             "pin a GND quando il magnete e' davanti.", ha="center", va="center", fontsize=9, color="#4a5c6b")
-    ax.text(62, 0.4, "Il Nano si alimenta dalla USB. Il motore NO: prende i 5 V dal buck. "
+    ax.text(62, 0.4, "Il Nano si alimenta dalla USB. Motore e sensori NO: prendono i 5 V dal buck. "
             "Tutti i GND in comune.", ha="center", fontsize=9.4, color=RED, style="italic")
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "F12_cablaggio.png"), dpi=170, bbox_inches="tight", pad_inches=0.15)
